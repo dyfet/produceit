@@ -338,11 +338,12 @@ int main(int argc, const char **argv)
             }
         }
 
+        fsys::mountpoint proc_release(*session + "/proc");
+
         // create pid1
         if(fork_handler())
             return 0;
 
-        fsys::mount::trace(false);
         chroot((*session).c_str());
         fsys::mount proc_mount;
         proc_mount.proc("/proc");

@@ -38,7 +38,30 @@
 
 using namespace std;
 
-bool fsys::mount::verbose = false;
+bool fsys::mountpoint::verbose = false;
+
+fsys::mountpoint::mountpoint(const std::string& where)
+{
+    path = where;
+}
+
+fsys::mountpoint::~mountpoint()
+{
+    release();
+}       
+
+
+void fsys::mountpoint::release()
+{
+    if(path.length() > 0) {
+        if(verbose)
+            cout << "releasing " << path << endl;
+        umount(path.c_str());
+        fsys::remove_directory(path);
+        path = std::string();
+    }
+}
+
 
 fsys::tmpdir::tmpdir(const std::string& where, perms_t mode)
 {
@@ -58,11 +81,13 @@ fsys::tmpdir::~tmpdir()
     }
 }
 
-fsys::mount::mount() : path()
+fsys::mount::mount() :
+mountpoint()
 {
 }
 
-fsys::mount::mount(const std::string& where, perms_t mode)
+fsys::mount::mount(const std::string& where, perms_t mode) :
+mountpoint()
 {
     if(mode == file_perms::temporary) {
         temp(where, mode);
@@ -70,25 +95,10 @@ fsys::mount::mount(const std::string& where, perms_t mode)
     }
 }
 
-fsys::mount::mount(const std::string& from, const std::string& where, perms_t mode)
+fsys::mount::mount(const std::string& from, const std::string& where, perms_t mode) :
+mountpoint()
 {
     bind(from, where, mode);
-}
-
-fsys::mount::~mount()
-{
-    release();
-}       
-
-void fsys::mount::release()
-{
-    if(path.length() > 0) {
-        if(verbose)
-            cout << "releasing " << path << endl;
-        umount(path.c_str());
-        fsys::remove_directory(path);
-        path = std::string();
-    }
 }
 
 void fsys::mount::proc(const std::string& where)

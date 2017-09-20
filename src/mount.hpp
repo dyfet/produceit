@@ -44,6 +44,35 @@
 
 namespace fsys {
 
+	class mountpoint
+	{
+		mountpoint(const mountpoint&) = delete;
+		const mountpoint& operator=(const mountpoint&) = delete;
+	public:
+		mountpoint(const std::string& where);
+		~mountpoint();
+
+		bool operator!() const {
+			return path.length() == 0;
+		}
+
+		operator bool() const {
+			return path.length() > 0;
+		}
+
+		static void trace(bool flag) {
+			verbose = flag;
+		}
+
+		void release(void);
+
+	protected:
+		inline mountpoint() {}
+	
+		std::string path;
+		static bool verbose;
+	};
+
 	class tmpdir final
 	{
 	public:
@@ -58,37 +87,17 @@ namespace fsys {
 		std::string path;
 	};
 
-	class mount final
+	class mount : public mountpoint
 	{
 	public:
 		mount();
 		mount(const std::string& where, perms_t mode = file_perms::owner_all);
 		mount(const std::string& from, const std::string& where, perms_t mode = file_perms::owner_all | file_perms::group_all);
-		~mount();
 
 		void bind(const std::string& from, const std::string& where, perms_t mode = file_perms::owner_all | file_perms::group_all);
 
 		void temp(const std::string& where, perms_t mode = file_perms::temporary);
 		void proc(const std::string& where);
-
-		void release();
-
-		bool operator!() const {
-			return path.length() == 0;
-		}
-
-		operator bool() const {
-			return path.length() > 0;
-		}
-
-		static void trace(bool flag) {
-			verbose = flag;
-		}
-
-	private:
-		std::string path;
-
-		static bool verbose;
 	};
 
 } // end namespace
