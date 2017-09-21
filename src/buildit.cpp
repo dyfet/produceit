@@ -101,11 +101,11 @@ static void task(const char *argv[], const char *envp[])
 {
     fsys::mount tmp_mount("/tmp", fsys::file_perms::temporary);
     fsys::create_directory("/tmp/buildd");
-    fsys::current_path("/tmp/buildd");
 
     if(fork_handler(is(verbose)))
         return;
 
+    fsys::current_path("/tmp/buildd");
     execve(argv[0], (char *const*)argv, (char *const *)envp);
 	::exit(-1);
 }
