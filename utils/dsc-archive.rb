@@ -62,7 +62,7 @@ files.each() do |file; ext, basename, origin|
     
   origin = File.dirname(file)
   print "#{header} #{basename}...\n" if verbose === true
-  FileUtils.copy_file(file, dest, preserve) if move === true
+  FileUtils.copy_file(file, dest, preserve) if move === false
   File.open(file, 'r') do |dsc; line, source, dest|
     while(line = dsc.gets)
       next unless line=~/^Files/...line=~/^$/

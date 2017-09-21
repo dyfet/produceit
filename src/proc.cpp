@@ -36,6 +36,16 @@ const char **create_env(const std::map<string,string>& env)
 	return envp;
 }
 
+void fork_command(const char **argv, bool output)
+{
+	if(!fork_handler(output)) {
+		execvp(*argv, (char *const *)argv);
+		perror("!");
+		cerr << "*** failed to execute " << *argv << endl;
+		exit(-1);
+	}
+}
+
 bool fork_handler(bool output)
 {
 	pid_t pid = fork();

@@ -22,6 +22,7 @@
 #include <map>
 #include "compiler.hpp"
 
+void fork_command(const char **argv, bool output = true);
 bool fork_handler(bool output = true);
 const char **create_env(const std::map<std::string,std::string>& env);
 

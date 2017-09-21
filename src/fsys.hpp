@@ -194,6 +194,7 @@ namespace fsys {
     const std::string current_path(fsys_error& err = lasterr);
     bool create_directory(const std::string& path, perms_t mode = file_perms::owner_all | file_perms::group_all, fsys_error& err = lasterr);
     bool remove_directory(const std::string& path, fsys_error& err = lasterr);
+    bool copy_dsc(const std::string& source, const std::string& target);
     bool copy_file(const std::string& from, const std::string& to, fsys_error& err = lasterr);
     bool rename(const std::string& from, const std::string& to, fsys_error& err = lasterr);
     bool remove(const std::string& path, fsys_error& err = lasterr);

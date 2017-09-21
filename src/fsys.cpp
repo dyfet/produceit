@@ -220,6 +220,33 @@ bool fsys::remove(const std::string& path, fsys_error& err)
 	return true;
 }
 
+bool fsys::copy_dsc(const std::string& source, const std::string& target)
+{
+	if(!exists(source))
+		return false;
+
+	auto prefix = fsys::dirname(source);
+	auto basename = fsys::basename(source);
+	std::ifstream changes(source);
+	std::string buffer;
+	bool files = false;
+
+	while(getline(changes, buffer)) {
+        if(buffer.substr(0, 6) == "Files:") {
+            files = true;
+            continue;
+        }
+        if(buffer[0] != ' ' || !files) {
+            files = false;
+            continue;
+        }
+		auto file = split(buffer).back();
+		if(!copy_file(prefix + "/" + file, target + "/" + file))
+			return false;
+    }
+    return copy_file(source, target + "/" + basename);
+}
+
 bool fsys::copy_file(const std::string& from, const std::string& to, fsys_error& err)
 {
 	std::ifstream source(from, ios::binary);

@@ -246,7 +246,7 @@ int main(int argc, const char **argv)
             cout << "architecture: " << *arch << endl;
         }
 
-		// detach what we can...
+        // detach what we can...
 #ifdef HAVE_UNSHARE
         if(unshare(CLONE_NEWNS | CLONE_NEWPID | CLONE_NEWIPC))
             throw runtime_error("cannot detach process space");
@@ -274,13 +274,14 @@ int main(int argc, const char **argv)
             else
                 cp = pkg_paths[pkg_count];
             const char *ext = strrchr(cp, '.');
-            if(!ext)
-                throw bad_pkg(cp);
-            if(!strcmp(ext, ".rpm")) {
+            int len = strlen(cp);
+            if(len > 7 && !strcmp(cp + len - 7, ".src.rpm")) {
                 if(!fsys::copy_file(pkg_paths[pkg_count], source + "/" + cp))
                     throw bad_pkg(cp);
             }
-            else if(!strcmp(ext, ".dsc")) {
+            else if(ext && !strcmp(ext, ".dsc")) {
+                if(!fsys::copy_dsc(pkg_paths[pkg_count], source))
+                    throw bad_pkg(cp);    
             }
             else
                 throw bad_pkg(cp);

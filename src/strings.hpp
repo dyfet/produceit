@@ -59,7 +59,7 @@ inline S lower_case(const S s)
     return out;
 }
 
-std::vector<std::string> split(const std::string& str, const std::string& delim);
+std::vector<std::string> split(const std::string& str, const std::string& delim = " ");
 /*{
     std::vector<std::string> result;
     std::size_t current, prev = 0;
