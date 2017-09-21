@@ -220,7 +220,7 @@ bool fsys::remove(const std::string& path, fsys_error& err)
 	return true;
 }
 
-bool fsys::copy_dsc(const std::string& source, const std::string& target)
+bool fsys::remove_dsc(const std::string& source, fsys_error& err)
 {
 	if(!exists(source))
 		return false;
@@ -241,10 +241,37 @@ bool fsys::copy_dsc(const std::string& source, const std::string& target)
             continue;
         }
 		auto file = split(buffer).back();
-		if(!copy_file(prefix + "/" + file, target + "/" + file))
+		if(!remove(prefix + "/" + file, err))
 			return false;
     }
-    return copy_file(source, target + "/" + basename);
+	return remove(source, err);
+}
+
+bool fsys::copy_dsc(const std::string& source, const std::string& target, fsys_error& err)
+{
+	if(!exists(source))
+		return false;
+
+	auto prefix = fsys::dirname(source);
+	auto basename = fsys::basename(source);
+	std::ifstream changes(source);
+	std::string buffer;
+	bool files = false;
+
+	while(getline(changes, buffer)) {
+        if(buffer.substr(0, 6) == "Files:") {
+            files = true;
+            continue;
+        }
+        if(buffer[0] != ' ' || !files) {
+            files = false;
+            continue;
+        }
+		auto file = split(buffer).back();
+		if(!copy_file(prefix + "/" + file, target + "/" + file, err))
+			return false;
+    }
+	return copy_file(source, target + "/" + basename, err);
 }
 
 bool fsys::copy_file(const std::string& from, const std::string& to, fsys_error& err)
