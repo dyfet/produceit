@@ -264,16 +264,18 @@ int main(int argc, const char **argv)
         // begin mounting
         fsys::mount top_mount(distrofs, *session, fsys::file_perms::owner_all);
         fsys::mount top_owner(rootuser, *session + "/root", fsys::file_perms::owner_all);
-        fsys::mount dev_mount(distrofs + "/dev", *session + "/dev");
-        fsys::mount sys_mount(distrofs + "/sys", *session + "/sys");
+        fsys::mount dev_mount("/dev", *session + "/dev");
+        fsys::mount sys_mount("/sys", *session + "/sys");
+        fsys::mount pts_mount("/dev/pts", *session + "/dev/pts");
+        fsys::mount shm_mount("/dev/shm", *session + "/dev/shm");
         fsys::mount tmp_mount(*session + "/tmp", fsys::file_perms::temporary);
         fsys::mount vtmp_mount(*session + "/var/tmp", fsys::file_perms::temporary);
 
         // for X support
         fsys::mount lib_dbus, run_dbus;
         if(is(xserver)) {
-            lib_dbus.bind(distrofs + "/var/lib/dbus", *session + "/var/lib/dbus");
-            run_dbus.bind(distrofs + "/var/run/dbus", *session + "/var/run/dbus");
+            lib_dbus.bind("/var/lib/dbus", *session + "/var/lib/dbus");
+            run_dbus.bind("/var/run/dbus", *session + "/var/run/dbus");
         }
 
         // add archive repository

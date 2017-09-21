@@ -97,6 +97,43 @@ static void cpu(std::string id)
         ::setenv("ARCH", (*arch).c_str(), 1);
 }
 
+static void debian(const std::string& pkg)
+{
+    fsys::mount tmp_mount("/tmp", fsys::file_perms::temporary);
+    fsys::create_directory("/tmp/buildd");
+    std::string from = "/var/origin/" + pkg;
+    std::ifstream dsc(from);
+    std::string buffer;
+    std::vector<std::string> deps;
+    while(std::getline(dsc, buffer)) {
+        if(buffer.substr(0, 14) == "Build-Depends:") {
+            auto list = split(buffer.substr(14), ",");
+            for(auto item : list) {
+                deps.push_back(strip(item));
+            }
+        }
+    }
+    dsc.close();
+
+    if(fork_handler(is(verbose)))
+        return;
+
+    // not using depends yet...
+
+    fsys::current_path("/tmp/buildd");
+    try {
+        const char *dpkg_source[] = {"dpkg-source", "-x", from.c_str(), "source", NULL}; 
+        const char *dpkg_build[] = {"dpkg-buildpackage", "-b", "-uc", NULL};
+        fork_command(dpkg_source, *verbose);
+        fsys::current_path("source");
+        fork_command(dpkg_build, *verbose);
+    }
+    catch(int exiting) {
+        ::exit(exiting);
+    }
+    ::exit(0);
+}
+
 static void task(const char *argv[], const char *envp[])
 {
     fsys::mount tmp_mount("/tmp", fsys::file_perms::temporary);
@@ -291,8 +328,10 @@ int main(int argc, const char **argv)
 		// begin mounting
         fsys::mount top_mount(distrofs, *session, fsys::file_perms::owner_all);
         fsys::mount top_owner(homefs, *session + "/root", fsys::file_perms::owner_all);
-        fsys::mount dev_mount(distrofs + "/dev", *session + "/dev");
-        fsys::mount sys_mount(distrofs + "/sys", *session + "/sys");
+        fsys::mount dev_mount("/dev", *session + "/dev");
+        fsys::mount sys_mount("/sys", *session + "/sys");
+        fsys::mount pts_mount("/dev/pts", *session + "/dev/pts");
+        fsys::mount shm_mount("/dev/shm", *session + "/dev/shm");
         fsys::mount tmp_mount(*session + "/var/tmp", fsys::file_perms::temporary);
 
 		// more setup
@@ -376,7 +415,9 @@ int main(int argc, const char **argv)
             cout << "build tasks " << pkg_count << endl;
             while(pkg_paths && *pkg_paths) {
                 cout << "-- build " << *pkg_paths << endl;
-                // task(...pkgs stuff...)
+                const char *ext = strrchr(*pkg_paths, '.');
+                if(!strcmp(ext, ".dsc"))
+                    debian(*pkg_paths);
                 ++pkg_paths;
             }
         }

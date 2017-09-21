@@ -40,7 +40,7 @@ inline bool ends_with(const S s, const E e) {
 }
 
 template<typename S = std::string>
-inline S upper_case(const S s)
+inline S upper_case(const S& s)
 {
     S out;
     for(size_t pos = 0; pos < s.size(); ++pos) {
@@ -50,7 +50,7 @@ inline S upper_case(const S s)
 }
 
 template<typename S = std::string>
-inline S lower_case(const S s)
+inline S lower_case(const S& s)
 {
     S out;
     for(size_t pos = 0; pos < s.size(); ++pos) {
@@ -59,20 +59,12 @@ inline S lower_case(const S s)
     return out;
 }
 
-std::vector<std::string> split(const std::string& str, const std::string& delim = " ");
-/*{
-    std::vector<std::string> result;
-    std::size_t current, prev = 0;
-    current = str.find_first_of(delim);
-    while(current != std::string::npos) {
-        result.push_back(str.substr(prev, current - prev));
-        prev = current + 1;
-        current = str.find_first_of(delim, prev);
-    }
-    result.push_back(str.substr(prev, current - prev));
-    return result;
+inline std::string strip(const std::string& str)
+{
+    size_t first = str.find_first_not_of(' ');
+    size_t last = str.find_last_not_of(' ');
+    return str.substr(first, (last-first+1));
 }
-*/
 
 inline bool eq(const char *p1, const char *p2)
 {
@@ -83,6 +75,8 @@ inline bool eq(const char *p1, const char *p2, size_t len)
 {
     return !strncmp(p1, p2, len);
 }
+
+std::vector<std::string> split(const std::string& str, const std::string& delim = " ");
 
 /*!
  * Common string functions and extensions to std::string.

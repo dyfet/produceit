@@ -40,7 +40,6 @@ void fork_command(const char **argv, bool output)
 {
 	if(!fork_handler(output)) {
 		execvp(*argv, (char *const *)argv);
-		perror("!");
 		cerr << "*** failed to execute " << *argv << endl;
 		exit(-1);
 	}
