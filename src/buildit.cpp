@@ -273,9 +273,18 @@ int main(int argc, const char **argv)
                 ++cp;
             else
                 cp = pkg_paths[pkg_count];
-            if(!fsys::copy_file(pkg_paths[pkg_count], source + "/" + cp))
+            const char *ext = strrchr(cp, '.');
+            if(!ext)
                 throw bad_path(cp);
-            ++pkg_count;
+            if(!strcmp(ext, ".rpm")) {
+                if(!fsys::copy_file(pkg_paths[pkg_count], source + "/" + cp))
+                    throw bad_path(cp);
+            }
+            else if(!strcmp(ext, ".dsc")) {
+            }
+            else
+                throw bad_path(cp);
+            pkg_paths[pkg_count++] = cp;
         }
 
 		// begin mounting
