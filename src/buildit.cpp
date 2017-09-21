@@ -275,15 +275,15 @@ int main(int argc, const char **argv)
                 cp = pkg_paths[pkg_count];
             const char *ext = strrchr(cp, '.');
             if(!ext)
-                throw bad_path(cp);
+                throw bad_pkg(cp);
             if(!strcmp(ext, ".rpm")) {
                 if(!fsys::copy_file(pkg_paths[pkg_count], source + "/" + cp))
-                    throw bad_path(cp);
+                    throw bad_pkg(cp);
             }
             else if(!strcmp(ext, ".dsc")) {
             }
             else
-                throw bad_path(cp);
+                throw bad_pkg(cp);
             pkg_paths[pkg_count++] = cp;
         }
 
@@ -374,6 +374,7 @@ int main(int argc, const char **argv)
             
             cout << "build tasks " << pkg_count << endl;
             while(pkg_paths && *pkg_paths) {
+                cout << "-- build " << *pkg_paths << endl;
                 // task(...pkgs stuff...)
                 ++pkg_paths;
             }
@@ -388,6 +389,10 @@ int main(int argc, const char **argv)
         ::exit(exit_code);
 		
 	}
+    catch(const bad_pkg& e) {
+        reason = e.what();
+        exit_code = 4;
+    }
     catch(const bad_path& e) {
         reason = e.what();
         exit_code = 4;

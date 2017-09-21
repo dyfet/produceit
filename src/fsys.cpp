@@ -254,6 +254,17 @@ fsys_error fsys::error()
 	return fsys_error(errno);
 }
 
+bad_pkg::bad_pkg(const std::string& path)
+{
+	msg_path = path;
+	msg_text = path + ": invalid source package";	
+}
+
+const char *bad_pkg::what() const noexcept
+{
+	return msg_text.c_str();
+}
+
 bad_path::bad_path(const std::string& path)
 {
 	msg_path = path;
