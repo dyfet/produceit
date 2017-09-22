@@ -123,10 +123,26 @@ static void debian(const std::string& pkg)
     fsys::current_path("/tmp/buildd");
     try {
         const char *dpkg_source[] = {"dpkg-source", "-x", from.c_str(), "source", NULL}; 
-        const char *dpkg_build[] = {"dpkg-buildpackage", "-b", "-uc", NULL};
+        const char *dpkg_build[] = {"dpkg-buildpackage", "-b", "-us", NULL};
         fork_command(dpkg_source, *verbose);
         fsys::current_path("source");
         fork_command(dpkg_build, *verbose);
+        dir results("..");
+        std::string entry;
+        bool changes = false;
+        while((entry = results.get()) != std::string()) {
+            if(entry.substr(entry.find_last_of(".") + 1) == "changes") {
+                changes = true;
+                if(!fsys::copy_dsc("../" + entry, "/var/results")) {
+                    cerr << "*** buildit: " + entry + ": failed to copy out" << endl;
+                    throw -1;
+                }
+            }
+        }
+        if(!changes)
+            cerr << "## " + pkg + ": failed" << endl;
+        else
+            cout << "## " + pkg + ": success" << endl; 
     }
     catch(int exiting) {
         ::exit(exiting);
@@ -343,7 +359,7 @@ int main(int argc, const char **argv)
         endgrent();
 
         fsys::mount source_mount(source, *session + "/var/origin");
-        fsys::mount result_mount(fsys::current_path(), *session + "/var/result");
+        fsys::mount result_mount(fsys::current_path(), *session + "/var/results");
 		fsys::mount archive_mount(binary, *session + "/var/archive");
         if(fsys::exists(*session + "/etc/apt/sources.list.d")) {
             if(is(update)) {

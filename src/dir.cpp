@@ -64,9 +64,12 @@ void dir::open(const std::string& path)
 
 std::string dir::get()
 {
-    if(state && state->find)
-        return state->find->d_name;
-    return std::string();
+    std::string result;
+    if(state && state->find) {
+        result = state->find->d_name;
+        next();
+    }
+    return result;
 } 
 
 void dir::next()
