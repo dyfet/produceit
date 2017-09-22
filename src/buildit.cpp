@@ -32,6 +32,7 @@ using namespace std;
 static args::flag helpflag('h', "--help", "display this list");
 static args::flag althelp('?', nullptr, nullptr);
 static args::string arch('a', "--arch", "cpu architecture");
+static args::flag binonly('b', "--binary", "binary architecture only");
 static args::flag depends('d', "--depends", "install build dependencies");
 static args::flag update('u', "--update", "update before packaging");
 static args::flag verbose('v', "--verbose", "display operations");
@@ -124,9 +125,13 @@ static void debian(const std::string& pkg)
     fsys::current_path("/tmp/buildd");
     std::string pkgclean = pkg.substr(0, pkg.find_first_of("_")) + "-build-deps";
 
+    const char *bflag = "-b";
+    if(is(binonly))
+        bflag = "-B";
+
     try {
         const char *dpkg_source[] = {"dpkg-source", "-x", from.c_str(), "source", NULL}; 
-        const char *dpkg_build[] = {"dpkg-buildpackage", "-b", "-us", NULL};
+        const char *dpkg_build[] = {"dpkg-buildpackage", bflag, "-us", NULL};
         const char *dpkg_depends[] = {"mk-build-deps", "-i", NULL};
         const char *dpkg_clean[] = {"apt-get", "-y", "purge", "--auto-remove", pkgclean.c_str(), NULL};
 
