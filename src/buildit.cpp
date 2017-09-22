@@ -32,6 +32,7 @@ using namespace std;
 static args::flag helpflag('h', "--help", "display this list");
 static args::flag althelp('?', nullptr, nullptr);
 static args::string arch('a', "--arch", "cpu architecture");
+static args::flag depends('d', "--depends", "install build dependencies");
 static args::flag update('u', "--update", "update before packaging");
 static args::flag verbose('v', "--verbose", "display operations");
 static keyfile etc_config;
@@ -121,12 +122,21 @@ static void debian(const std::string& pkg)
     // not using depends yet...
 
     fsys::current_path("/tmp/buildd");
+    std::string pkgclean = pkg.substr(0, pkg.find_first_of("_")) + "-build-deps";
+
     try {
         const char *dpkg_source[] = {"dpkg-source", "-x", from.c_str(), "source", NULL}; 
         const char *dpkg_build[] = {"dpkg-buildpackage", "-b", "-us", NULL};
+        const char *dpkg_depends[] = {"mk-build-deps", "-i", NULL};
+        const char *dpkg_clean[] = {"apt-get", "-y", "purge", "--auto-remove", pkgclean.c_str(), NULL};
+
         fork_command(dpkg_source, *verbose);
         fsys::current_path("source");
+        if(is(depends))
+            fork_command(dpkg_depends, *verbose);
         fork_command(dpkg_build, *verbose);
+        if(is(depends))
+            fork_command(dpkg_clean, *verbose);
         dir results("..");
         std::string entry;
         bool changes = false;
