@@ -122,7 +122,8 @@ private:
 };
 
 /*!
- * Common macros and definitions for mounting.
+ * Raii patterned mount creation and management classes.  This is meant to create and
+ * support mounts automatically unmount when falling out of scope.
  * \file mount.hpp
  */
 

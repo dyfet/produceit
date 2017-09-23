@@ -44,7 +44,7 @@ private:
 };
 
 /*!
- * Generic key store for [section] key=value config files.
+ * Generic key store parser for [section] key=value config files.
  * \file keyfile.hpp
  */
 

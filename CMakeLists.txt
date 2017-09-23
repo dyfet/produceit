@@ -7,6 +7,7 @@ include(CheckFunctionExists)
 check_function_exists(personality HAVE_PERSONALITY)
 check_function_exists(unshare HAVE_UNSHARE)
 check_function_exists(setgroups HAVE_SETGROUPS)
+configure_file(Doxyfile.cmake Doxyfile)
 configure_file(src/config.hpp.in config.hpp NEWLINE_STYLE UNIX)
 configure_file(utils/test-shellit.sh test-shellit COPYONLY)
 include_directories(${CMAKE_BINARY_DIR})
@@ -31,6 +32,23 @@ target_link_libraries(buildit common)
 add_executable(shellit src/shellit.cpp)
 add_dependencies(shellit common)
 target_link_libraries(shellit common)
+
+add_custom_target(dist
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/produceit-*.tar.gz"
+    COMMAND git archive -o "${CMAKE_CURRENT_BINARY_DIR}/produceit-${VERSION}.tar.gz" --format tar.gz --prefix="produceit-${VERSION}/" HEAD
+)
+
+add_custom_target(html
+    COMMAND doxygen Doxyfile
+)
+
+add_custom_target(pdf
+    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc/latex"
+    COMMAND make
+    COMMAND mv refman.pdf "${CMAKE_CURRENT_BINARY_DIR}/produceit.pdf"
+    DEPENDS html
+)
 
 install(TARGETS buildit shellit DESTINATION ${CMAKE_INSTALL_BINDIR} PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE SETUID)
 install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/dsc-archive.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME dsc-archive )

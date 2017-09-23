@@ -2,6 +2,7 @@ CTest*
 CMakeFiles/
 Debug/
 Release/
+doc/
 
 *.user
 *.json
@@ -16,6 +17,7 @@ shellit
 archiveit
 core
 
+*.pdf
 *.cbp
 *.o
 *.a
