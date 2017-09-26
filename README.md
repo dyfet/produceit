@@ -7,4 +7,4 @@ Unlike cape-devtools, this implementation is built purely on c++11, and uses rub
 
 Support
 =======
-Maybe one day I will be able to, but at the moment I do not have any infrastructure or means to offer any support.  I do maintain an email address for public contact for all similarly published Tycho Softworks projects as [tychosoft@gmail.com](mailto://tychosoft@gmail.com).  Merge requests may be accepted when I happen to have a chance and connectivity to do so.  I also will be using the gitlab [produceit](https://gitlab.com/tychosoft/produceit) issue tracker for bug reporting and project management.
+I maintain an email address for public contact for Tycho Softworks projects as [tychosoft@gmail.com](mailto://tychosoft@gmail.com).  Merge requests may be accepted when I have time to do so.  I also will be using the gitlab [produceit](https://gitlab.com/tychosoft/produceit) issue tracker for bug reporting and project management.
