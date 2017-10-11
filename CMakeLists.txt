@@ -33,10 +33,10 @@ add_executable(shellit src/shellit.cpp)
 add_dependencies(shellit common)
 target_link_libraries(shellit common)
 
-add_custom_target(dist
+add_custom_target(publish
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
     COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/produceit-*.tar.gz"
-    COMMAND git archive -o "${CMAKE_CURRENT_BINARY_DIR}/produceit-${VERSION}.tar.gz" --format tar.gz --prefix="produceit-${VERSION}/" HEAD
+    COMMAND git archive -o "${CMAKE_CURRENT_BINARY_DIR}/produceit-${VERSION}.tar.gz" --format tar.gz --prefix="produceit-${VERSION}/" v${VERSION}
 )
 
 add_custom_target(html
