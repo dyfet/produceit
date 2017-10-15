@@ -1,17 +1,24 @@
 CTest*
 CMakeFiles/
+CMakeScripts/
 Debug/
 Release/
 doc/
 
+.codelite/
+*.xcodeproj/
+.ninja*
+*.project
+*.workspace
+*.ninja
 *.user
 *.json
 *.cmake
+ALL_BUILD_*
 Makefile
 CMakeCache.txt
 
 config.hpp
-test-shellit
 buildit
 shellit
 archiveit
