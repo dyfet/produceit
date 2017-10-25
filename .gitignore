@@ -25,6 +25,11 @@ shellit
 archiveit
 core
 
+*.tar.gz
+*.rpm
+*.deb
+*.dsc
+*.changes
 *.pdf
 *.cbp
 *.o
