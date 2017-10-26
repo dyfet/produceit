@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(ProduceIt VERSION 0.1.0 LANGUAGES CXX)
-string(TOLOWER "${PROJECT_NAME}" PROJECT_ARCHIVE)
+string(TOLOWER "${PROJECT_NAME}" PACKAGE_ARCHIVE)
+set(PACKAGE_RELEASE "1")
 
 include(GNUInstallDirs)
 include(CheckFunctionExists)
@@ -35,29 +36,29 @@ install(FILES ${CMAKE_SOURCE_DIR}/produceit.conf DESTINATION ${CMAKE_INSTALL_SYS
 
 add_custom_target(dist
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.tar.gz"
-    COMMAND git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" "v${PROJECT_VERSION}" 2>/dev/null || git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" HEAD   
+    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_ARCHIVE}-*.tar.gz"
+    COMMAND git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PACKAGE_ARCHIVE}-${PROJECT_VERSION}/" "v${PROJECT_VERSION}" 2>/dev/null || git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PACKAGE_ARCHIVE}-${PROJECT_VERSION}/" HEAD   
 )
 
 add_custom_target(distclean
     COMMAND ${CMAKE_BUILD_TOOL} clean
-    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.tar.gz"
-    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.rpm"
+    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_ARCHIVE}-*.tar.gz"
+    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_ARCHIVE}-*.rpm"
     COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/*.pdf"
     COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/doc"
 )
 
 # if cross-compiling, can also generate cross-build packages...
 if(CMAKE_CROSSCOMPILING)
-    set(CPACK_SYSTEM_NAME "1.cross")
-    set(CPACK_PACKAGE_NAME "${PROJECT_ARCHIVE}")
+    set(CPACK_SYSTEM_NAME "${PACKAGE_RELEASE}.cross")
+    set(CPACK_PACKAGE_NAME "${PACKAGE_ARCHIVE}")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "chroot package production and testing environment")
     set(CPACK_PACKAGE_VENDOR "Tycho Softworks")
     set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
     set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
     set(CPACK_STRIP_FILES TRUE)
     set(CPACK_RPM_PACKAGE_URL "https://gitlab.com/tychosoft/produceit")
-    set(CPACK_RPM_PACKAGE_RELEASE 1)
+    set(CPACK_RPM_PACKAGE_RELEASE ${PACKAGE_RELEASE})
     set(CPACK_RPM_PACKAGE_REQUIRES "rpm-build, ruby, gnupg2")
     set(CPACK_RPM_PACKAGE_SUGGESTS "qemu-user-static")
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Tycho Softworks")
@@ -66,7 +67,7 @@ if(CMAKE_CROSSCOMPILING)
 elseif(UNIX)
     add_custom_target(srpm
         DEPENDS dist
-        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.rpm"
+        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PACKAGE_ARCHIVE}-*.rpm"
         COMMAND rpmbuild -bs --nodeps "${CMAKE_CURRENT_SOURCE_DIR}/produceit.spec"
     )
 
