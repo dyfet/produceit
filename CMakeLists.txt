@@ -21,6 +21,8 @@ file(GLOB markdown *.md)
 
 add_subdirectory(src)
 
+# these give access to docs and support files when cmake is exported to an ide
+
 add_custom_target(support SOURCES produceit.conf produceit.spec ${scripts} src/config.hpp.in Doxyfile.in)
 
 add_custom_target(docs SOURCES LICENSE ${markdown}
@@ -37,19 +39,6 @@ add_custom_target(dist
     COMMAND git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" "v${PROJECT_VERSION}" 2>/dev/null || git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" HEAD   
 )
 
-add_custom_target(srpm
-    DEPENDS dist
-    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.rpm"
-    COMMAND rpmbuild -bs --nodeps "${CMAKE_CURRENT_SOURCE_DIR}/produceit.spec"
-)
-
-add_custom_target(pdf
-    WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc/latex"
-    COMMAND make
-    COMMAND mv refman.pdf "${CMAKE_CURRENT_BINARY_DIR}/produceit.pdf"
-    DEPENDS docs
-)
-
 add_custom_target(distclean
     COMMAND ${CMAKE_BUILD_TOOL} clean
     COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.tar.gz"
@@ -57,4 +46,35 @@ add_custom_target(distclean
     COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/*.pdf"
     COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/doc"
 )
+
+# if cross-compiling, can also generate cross-build packages...
+if(CMAKE_CROSSCOMPILING)
+    set(CPACK_SYSTEM_NAME "1.cross")
+    set(CPACK_PACKAGE_NAME "${PROJECT_ARCHIVE}")
+    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "chroot package production and testing environment")
+    set(CPACK_PACKAGE_VENDOR "Tycho Softworks")
+    set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
+    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
+    set(CPACK_STRIP_FILES TRUE)
+    set(CPACK_RPM_PACKAGE_URL "https://gitlab.com/tychosoft/produceit")
+    set(CPACK_RPM_PACKAGE_RELEASE 1)
+    set(CPACK_RPM_PACKAGE_REQUIRES "rpm-build, ruby, gnupg2")
+    set(CPACK_RPM_PACKAGE_SUGGESTS "qemu-user-static")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Tycho Softworks")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "rpm, ruby, gnupg")
+    include(CPack)
+elseif(UNIX)
+    add_custom_target(srpm
+        DEPENDS dist
+        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.rpm"
+        COMMAND rpmbuild -bs --nodeps "${CMAKE_CURRENT_SOURCE_DIR}/produceit.spec"
+    )
+
+    add_custom_target(pdf
+        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc/latex"
+        COMMAND make
+        COMMAND mv refman.pdf "${CMAKE_CURRENT_BINARY_DIR}/produceit.pdf"
+        DEPENDS docs
+    )
+endif()
 
