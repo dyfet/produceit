@@ -18,6 +18,7 @@ _*
 *.cmake
 ALL_BUILD_*
 Makefile
+Bootstrap.cmake
 CMakeCache.txt
 install_manifest.txt
 
