@@ -23,6 +23,10 @@ add_subdirectory(src)
 
 add_custom_target(support SOURCES produceit.conf produceit.spec ${scripts} src/config.hpp.in Doxyfile.in)
 
+add_custom_target(docs SOURCES LICENSE ${markdown}
+    COMMAND doxygen Doxyfile
+)
+
 install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/dsc-archive.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME dsc-archive )
 install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/dsc-remove.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME dsc-remove )
 install(FILES ${CMAKE_SOURCE_DIR}/produceit.conf DESTINATION ${CMAKE_INSTALL_SYSCONFDIR})
@@ -37,10 +41,6 @@ add_custom_target(srpm
     DEPENDS dist
     COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.rpm"
     COMMAND rpmbuild -bs --nodeps "${CMAKE_CURRENT_SOURCE_DIR}/produceit.spec"
-)
-
-add_custom_target(docs SOURCES LICENSE ${markdown}
-    COMMAND doxygen Doxyfile
 )
 
 add_custom_target(pdf

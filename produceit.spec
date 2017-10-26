@@ -9,7 +9,8 @@ URL:     https://gitlab.com/tychosoft/produceit
 Source0: https://pub.cherokeesofidaho.org/tarballs/%{name}-%{version}.tar.gz
 Group:   system/tools
 
-BuildRequires: cmake gcc-c++
+BuildRequires: cmake >= 3.1.0
+BuildRequires: gcc-c++
 Requires:      rpm-build ruby gnupg2
 Suggests:	   qemu-user-static
 
