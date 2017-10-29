@@ -3,7 +3,7 @@ project(ProduceIt VERSION 0.1.0 LANGUAGES CXX)
 string(TOLOWER "${PROJECT_NAME}" PACKAGE_ARCHIVE)
 set(PACKAGE_RELEASE "1")
 
-include(./Bootstrap.cmake OPTIONAL)
+include(${CMAKE_CURRENT_SOURCE_DIR}/Custom.cmake OPTIONAL)
 include(GNUInstallDirs)
 include(CheckFunctionExists)
 
