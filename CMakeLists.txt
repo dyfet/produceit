@@ -40,6 +40,10 @@ add_custom_target(dist
     COMMAND git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_NAME}-${PROJECT_VERSION}/" "v${PROJECT_VERSION}" 2>/dev/null || git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_NAME}-${PROJECT_VERSION}/" HEAD   
 )
 
+add_custom_target(source
+    DEPENDS dist
+)
+
 add_custom_target(distclean
     COMMAND ${CMAKE_BUILD_TOOL} clean
     COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-*.tar.gz"
