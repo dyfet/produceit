@@ -16,6 +16,7 @@
  */
 
 #include <iostream>
+#include <algorithm>
 #include <assert.h>
 #include "args.hpp"
 

@@ -7,6 +7,10 @@ project(ProduceIt VERSION 0.1.0 LANGUAGES CXX)
 string(TOLOWER "${PROJECT_NAME}" PROJECT_ARCHIVE)
 set(PROJECT_RELEASE "1")
 
+if(CMAKE_GENERATOR MATCHES "Unix")
+    set(CMAKE_MAINTAINER true)
+endif()
+
 include(${CMAKE_CURRENT_SOURCE_DIR}/Custom.cmake OPTIONAL)
 include(GNUInstallDirs)
 include(CheckFunctionExists)
@@ -41,23 +45,25 @@ install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/dsc-archive.rb DESTINATION ${CMAKE_IN
 install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/dsc-remove.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME dsc-remove )
 install(FILES ${CMAKE_SOURCE_DIR}/produceit.conf DESTINATION ${CMAKE_INSTALL_SYSCONFDIR})
 
-add_custom_target(dist
-    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.tar.gz"
-    COMMAND git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" "v${PROJECT_VERSION}" 2>/dev/null || git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" HEAD   
-)
+if(CMAKE_MAINTAINER)
+    add_custom_target(dist
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.tar.gz"
+        COMMAND git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" "v${PROJECT_VERSION}" 2>/dev/null || git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" HEAD   
+    )
 
-add_custom_target(source
-    DEPENDS dist
-)
+    add_custom_target(source
+        DEPENDS dist
+    )
 
-add_custom_target(distclean
-    COMMAND ${CMAKE_BUILD_TOOL} clean
-    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.tar.gz"
-    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.rpm"
-    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/*.pdf"
-    COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/doc"
-)
+    add_custom_target(distclean
+        COMMAND ${CMAKE_BUILD_TOOL} clean
+        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.tar.gz"
+        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.rpm"
+        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/*.pdf"
+        COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/doc"
+    )
+endif()
 
 # if cross-compiling, can also generate cross-build packages...
 if(CMAKE_CROSSCOMPILING)
@@ -75,7 +81,7 @@ if(CMAKE_CROSSCOMPILING)
     set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Tycho Softworks")
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "rpm, ruby, gnupg")
     include(CPack)
-elseif(UNIX)
+elseif(CMAKE_MAINTAINER)
     add_custom_target(srpm
         DEPENDS dist
         COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.rpm"
