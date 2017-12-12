@@ -21,6 +21,7 @@
 #include "mount.hpp"
 #include "args.hpp"
 #include "keyfile.hpp"
+#include "output.hpp"
 #include <stdlib.h>
 #include <sys/utsname.h>
 #include <sys/wait.h>
@@ -78,11 +79,11 @@ int main(int argc, const char **argv)
 
 		args cli(argv);
 		if(is(helpflag) || is(althelp) || argc < 1) {
-			cout << "Usage: shellit [options] [command [..args]]" << endl;
-			cout << "Execute in chroot environment." << endl << endl;
-			cout << "Options:" << std::endl;
+			output() << "Usage: shellit [options] [command [..args]]";
+			output() << "Execute in chroot environment.";
+			output() << "\nOptions:";
 			args::help();
-			cout << "Report bugs to tychosoft@gmail.com" << endl;
+			output() << "Report bugs to tychosoft@gmail.com";
 			::exit(0);
 		}
 
@@ -233,9 +234,9 @@ int main(int argc, const char **argv)
 		fsys::mount::trace(*verbose);
 
         if(is(verbose)) {
-            cout << "creating " << *session << endl;
-            cout << "distribution: " << distro << endl;
-            cout << "architecture: " << *arch << endl;
+            output() << "creating " << *session;
+            output() <<  "distribution: " << distro;
+            output() << "architecture: " << *arch;
         }
 
         // detach what we can...
@@ -256,7 +257,7 @@ int main(int argc, const char **argv)
         auto files = split(copy, " ,;");
         for(auto path : files) {
             if(is(verbose))
-                cout << "copy " << path << endl;
+                output() << "copy " << path;
             if(!fsys::copy_file(path, distrofs + "/" + path))
                 throw bad_path(path);
         }
@@ -285,7 +286,7 @@ int main(int argc, const char **argv)
             std::ofstream repo(*session + "/etc/apt/sources.list.d/chroot.tmp");
             if(repo.is_open()) {
                 if(is(verbose))
-                    cout << "creating chroot.list" << endl;
+                    output() << "creating chroot.list";
                 if(fsys::exists(pkg_archive + "/Packages"))
                     repo << "deb file:///var/archive/ ./" << endl;
                 if(fsys::exists(pkg_archive + "/Sources"))
@@ -299,7 +300,7 @@ int main(int argc, const char **argv)
             std::ofstream repo(*session + "/etc/yum.repos.d/chroot.tmp");
             if(repo.is_open()) {
                 if(is(verbose))
-                    cout << "creating chroot.repo" << endl;
+                    output() << "creating chroot.repo";
                 if(fsys::exists(pkg_archive)) {
                     repo << "[chroot]" << endl;
                     repo << "name = chroot packages" << endl;
@@ -389,7 +390,7 @@ int main(int argc, const char **argv)
     }
 
 	if(exit_code)
-		cerr << "*** shellit: " << reason << endl;
+		error() << "*** shellit: " << reason;
 
 	return exit_code;
 }	

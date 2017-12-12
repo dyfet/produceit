@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.1.0)
-project(produceit VERSION 0.1.0 LANGUAGES CXX)
+if (POLICY CMP0063)
+  cmake_policy(SET CMP0063 NEW)
+endif()
+
+project(ProduceIt VERSION 0.1.0 LANGUAGES CXX)
+string(TOLOWER "${PROJECT_NAME}" PROJECT_ARCHIVE)
 set(PROJECT_RELEASE "1")
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/Custom.cmake OPTIONAL)
@@ -10,11 +15,13 @@ check_function_exists(personality HAVE_PERSONALITY)
 check_function_exists(unshare HAVE_UNSHARE)
 check_function_exists(setgroups HAVE_SETGROUPS)
 configure_file(Doxyfile.in Doxyfile)
-configure_file(src/config.hpp.in config.hpp NEWLINE_STYLE UNIX)
-include_directories(${CMAKE_BINARY_DIR})
+configure_file(config.hpp.in config.hpp)
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_POSITION_INDEPENDENT_CODE true)
+set(CMAKE_CXX_VISIBILITY_PRESET hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 set(PRODUCEIT_LIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}/produceit")
 
 file(GLOB scripts utils/*.rb)
@@ -24,7 +31,7 @@ add_subdirectory(src)
 
 # these give access to docs and support files when cmake is exported to an ide
 
-add_custom_target(support SOURCES produceit.conf produceit.spec ${scripts} src/config.hpp.in Doxyfile.in)
+add_custom_target(support SOURCES produceit.conf produceit.spec ${scripts} config.hpp.in Doxyfile.in)
 
 add_custom_target(docs SOURCES LICENSE ${markdown}
     COMMAND doxygen Doxyfile
@@ -36,8 +43,8 @@ install(FILES ${CMAKE_SOURCE_DIR}/produceit.conf DESTINATION ${CMAKE_INSTALL_SYS
 
 add_custom_target(dist
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-*.tar.gz"
-    COMMAND git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_NAME}-${PROJECT_VERSION}/" "v${PROJECT_VERSION}" 2>/dev/null || git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_NAME}-${PROJECT_VERSION}/" HEAD   
+    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.tar.gz"
+    COMMAND git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" "v${PROJECT_VERSION}" 2>/dev/null || git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" HEAD   
 )
 
 add_custom_target(source
@@ -46,8 +53,8 @@ add_custom_target(source
 
 add_custom_target(distclean
     COMMAND ${CMAKE_BUILD_TOOL} clean
-    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-*.tar.gz"
-    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-*.rpm"
+    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.tar.gz"
+    COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.rpm"
     COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/*.pdf"
     COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/doc"
 )
@@ -55,7 +62,7 @@ add_custom_target(distclean
 # if cross-compiling, can also generate cross-build packages...
 if(CMAKE_CROSSCOMPILING)
     set(CPACK_SYSTEM_NAME "${PROJECT_RELEASE}.cross")
-    set(CPACK_PACKAGE_NAME "${PROJECT_NAME}")
+    set(CPACK_PACKAGE_NAME "${PROJECT_ARCHIVE}")
     set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "chroot package production and testing environment")
     set(CPACK_PACKAGE_VENDOR "Tycho Softworks")
     set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
@@ -71,7 +78,7 @@ if(CMAKE_CROSSCOMPILING)
 elseif(UNIX)
     add_custom_target(srpm
         DEPENDS dist
-        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}-*.rpm"
+        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.rpm"
         COMMAND rpmbuild -bs --nodeps "${CMAKE_CURRENT_SOURCE_DIR}/produceit.spec"
     )
 

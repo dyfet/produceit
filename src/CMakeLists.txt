@@ -1,5 +1,5 @@
 file(GLOB headers *.hpp)
-set(sources args.cpp keyfile.cpp fsys.cpp dir.cpp mount.cpp strings.cpp proc.cpp)
+set(sources args.cpp keyfile.cpp fsys.cpp dir.cpp mount.cpp strings.cpp output.cpp proc.cpp)
 
 add_library(common STATIC ${headers} ${sources})
 
