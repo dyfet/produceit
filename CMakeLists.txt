@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 3.1.0)
-if (POLICY CMP0063)
-  cmake_policy(SET CMP0063 NEW)
-endif()
-
 project(ProduceIt VERSION 0.1.0 LANGUAGES CXX)
 string(TOLOWER "${PROJECT_NAME}" PROJECT_ARCHIVE)
 set(PROJECT_RELEASE "1")
+
+if (POLICY CMP0063)
+  cmake_policy(SET CMP0063 OLD)
+endif()
 
 if(CMAKE_GENERATOR MATCHES "Unix")
     set(CMAKE_MAINTAINER true)
