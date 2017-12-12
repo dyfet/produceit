@@ -23,6 +23,7 @@
 #include "mount.hpp"
 #include "args.hpp"
 #include "keyfile.hpp"
+#include "output.hpp"
 #include <stdlib.h>
 #include <sys/utsname.h>
 #include <sys/wait.h>
@@ -155,9 +156,9 @@ static void debian(const std::string& pkg)
             }
         }
         if(!changes)
-            cerr << "## " + pkg + ": failed" << endl;
+            error() << "## " + pkg + ": failed";
         else
-            cout << "## " + pkg + ": success" << endl; 
+            output() << "## " + pkg + ": success"; 
     }
     catch(int exiting) {
         ::exit(exiting);
@@ -200,11 +201,11 @@ int main(int argc, const char **argv)
 
 		args cli(argv);
 		if(is(helpflag) || is(althelp) || argc < 1) {
-			cout << "Usage: buildit [options] distro [pkgs..]" << endl;
-			cout << "Build package in chroot environment." << endl << endl;
-			cout << "Options:" << std::endl;
+			output() << "Usage: buildit [options] distro [pkgs..]";
+			output() << "Build package in chroot environment.";
+			output() << "\nOptions:";
 			args::help();
-			cout << "Report bugs to tychosoft@gmail.com" << endl;
+			output() << "Report bugs to tychosoft@gmail.com";
 			::exit(0);
 		}
 
@@ -309,9 +310,9 @@ int main(int argc, const char **argv)
         fsys::mount::trace(*verbose);
 
         if(is(verbose)) {
-            cout << "creating " << *session << endl;
-            cout << "distribution: " << distro << endl;
-            cout << "architecture: " << *arch << endl;
+            output() << "creating " << *session;
+            output() << "distribution: " << distro;
+            output() << "architecture: " << *arch;
         }
 
         // detach what we can...
@@ -328,7 +329,7 @@ int main(int argc, const char **argv)
         auto files = split(copy, " ,;");
         for(auto path : files) {
             if(is(verbose))
-                cout << "copy " << path << endl;
+                output() << "copy " << path;
             if(!fsys::copy_file(path, distrofs + "/" + path))
                 throw bad_path(path);
         }
@@ -388,7 +389,7 @@ int main(int argc, const char **argv)
             std::ofstream repo(*session + "/etc/apt/sources.list.d/chroot.tmp");
             if(repo.is_open()) {
                 if(is(verbose))
-                    cout << "creating chroot.list" << endl;
+                    output() << "creating chroot.list";
                 if(fsys::exists(pkg_archive + "/Packages"))
                     repo << "deb file:///var/archive/ ./" << endl;
                 if(fsys::exists(pkg_archive + "/Sources"))
@@ -407,7 +408,7 @@ int main(int argc, const char **argv)
             std::ofstream repo(*session + "/etc/yum.repos.d/chroot.tmp");
             if(repo.is_open()) {
                 if(is(verbose))
-                    cout << "creating chroot.repo" << endl;
+                    output() << "creating chroot.repo";
                 if(fsys::exists(pkg_archive)) {
                     repo << "[chroot]" << endl;
                     repo << "name = chroot packages" << endl;
@@ -437,15 +438,15 @@ int main(int argc, const char **argv)
         int exit_code = 0;
 
         try {
-            cout << "update tasks " << update_tasks.size() << endl;
+            output() << "update tasks " << update_tasks.size();
             for(auto args : update_tasks) {
-                cout << "-- task " << args[0] << endl;
+                output() << "-- task " << args[0];
                 task(++args, envp);
             }
             
-            cout << "build tasks " << pkg_count << endl;
+            output() << "build tasks " << pkg_count;
             while(pkg_paths && *pkg_paths) {
-                cout << "-- build " << *pkg_paths << endl;
+                output() << "-- build " << *pkg_paths;
                 const char *ext = strrchr(*pkg_paths, '.');
                 if(!strcmp(ext, ".dsc"))
                     debian(*pkg_paths);
@@ -453,7 +454,7 @@ int main(int argc, const char **argv)
             }
         }
         catch(const bad_mount& e) {
-            cerr << "*** buildit: " << e.what() << endl;
+            error() << "*** buildit: " << e.what();
             exit_code = -1;
         }
         catch(int status) {
@@ -491,7 +492,7 @@ int main(int argc, const char **argv)
     }
 
 	if(exit_code)
-		cerr << "*** buildit: " << reason << endl;
+		error() << "*** buildit: " << reason;
 
 	return exit_code;
 }

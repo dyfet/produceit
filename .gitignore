@@ -1,4 +1,5 @@
 CTest*
+CPack*
 CMakeFiles/
 CMakeScripts/
 Debug/
@@ -15,7 +16,7 @@ _*
 *.ninja
 *.user
 *.json
-*.cmake
+cmake_*.cmake
 ALL_BUILD_*
 Makefile
 Custom.cmake
