@@ -110,7 +110,7 @@ void fsys::mount::proc(const std::string& where)
 #if defined(MS_BIND)
     int err = ::mount("none", where.c_str(), "proc", 0, NULL);
 #else
-    int err = ::mount("procfs", where.c_str(), 0, NULL);
+    int err = ::mount("procfs", where.c_str(), 0, nullptr);
 #endif
 #endif
     if(err)

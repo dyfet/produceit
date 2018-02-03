@@ -52,7 +52,7 @@ bool keyfile::load(const std::string& path)
 		if(!isalnum(input[0]))
 			continue;
 
-		auto pos = input.find_first_of("=");
+		auto pos = input.find_first_of('=');
 		if(pos < 1 || pos == std::string::npos)
 			continue;
 

@@ -6,6 +6,7 @@ Debug/
 Release/
 doc/
 
+.idea/
 .codelite/
 *.xcodeproj/
 

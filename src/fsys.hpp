@@ -85,7 +85,7 @@ private:
 
 //namespace saves on static public member defs...
 namespace fsys {
-    enum class file_perms : int
+    enum class file_perms : unsigned
     {
         no_perms        = 0,
 
@@ -104,17 +104,17 @@ namespace fsys {
         others_exe      =    01,
         others_all      =    07,
 
-        shared_access   = owner_all | group_all | others_read | others_exe,
+        shared_access   = static_cast<unsigned>(owner_all | group_all | others_read | others_exe),
 
-        all_all     = owner_all | group_all | others_all, // 0777
-        read_all    = owner_read | owner_exe | group_read | group_exe | others_read | others_exe,
+        all_all     = static_cast<unsigned>(owner_all | group_all | others_all), // 0777
+        read_all    = static_cast<unsigned>(owner_read | owner_exe | group_read | group_exe | others_read | others_exe),
 
         set_uid_on_exe  = 04000,
         set_gid_on_exe  = 02000,
         sticky_bit      = 01000,
         temporary       = 01777,
 
-        perms_mask      = all_all | set_uid_on_exe | set_gid_on_exe | sticky_bit, // 07777
+        perms_mask      = static_cast<unsigned>(all_all | set_uid_on_exe | set_gid_on_exe | sticky_bit), // 07777
 
         perms_not_known = 0xffff,
 

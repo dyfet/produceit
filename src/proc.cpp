@@ -26,13 +26,13 @@ using namespace std;
 
 const char **create_env(const std::map<string,string>& env)
 {
-	const char **envp = new const char*[env.size() + 1];
+	auto envp = new const char*[env.size() + 1];
 	int pos = 0;
 	for(auto pair : env) {
 		auto entry = pair.first + "=" + pair.second;
 		envp[pos++] = ::strdup(entry.c_str());
 	}
-	envp[pos] = NULL;
+	envp[pos] = nullptr;
 	return envp;
 }
 

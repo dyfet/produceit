@@ -149,7 +149,7 @@ int main(int argc, const char **argv)
         if(pwd)
             nobody = pwd->pw_uid;
 
-		pwd = getpwuid(exec_uid);
+		pwd = getpwuid((uid_t)exec_uid);
 		
 		if(exec_uid) {
 			if(!pwd)
@@ -218,11 +218,11 @@ int main(int argc, const char **argv)
 
         etc_config["env"]["HOME"] = pwd->pw_dir;
         etc_config["env"]["USER"] = etc_config["env"]["LOGNAME"] = etc_config["env"]["USERNAME"] = pwd->pw_name;
-        etc_config["env"]["UID"] = std::to_string(pwd->pw_uid).c_str();
+        etc_config["env"]["UID"] = std::to_string(pwd->pw_uid);
         etc_config["env"]["PRODUCEIT"] = std::to_string(getpid());
 
         std::list<string> copy_env = {"TERM", "SSH_CONNECTION", "SSH_CLIENT", "SSH_TTY", "ARCH", "HOSTNAME", "HOSTTYPE", "LINES", "SYSID"};
-        for(auto env_id : copy_env) {
+        for(const auto &env_id : copy_env) {
             const char *cp = ::getenv(env_id.c_str());
             if(cp != nullptr)
                 etc_config["env"][env_id] = cp;
@@ -231,7 +231,7 @@ int main(int argc, const char **argv)
         // create session...
         fsys::tmpdir prefix(etc_config["system"]["prefix"]);
         fsys::tmpdir session(*prefix + "/" + std::to_string(getpid()));
-		fsys::mount::trace(*verbose);
+		fsys::mount::trace(is(verbose));
 
         if(is(verbose)) {
             output() << "creating " << *session;
@@ -255,7 +255,7 @@ int main(int argc, const char **argv)
         if(copy.length() == 0)
             copy = "/etc/shadow /etc/gshadow /etc/group /etc/passwd /etc/sudoers /etc/hosts /etc/resolv.conf /etc/hostname";
         auto files = split(copy, " ,;");
-        for(auto path : files) {
+        for(const auto path : files) {
             if(is(verbose))
                 output() << "copy " << path;
             if(!fsys::copy_file(path, distrofs + "/" + path))
@@ -330,8 +330,8 @@ int main(int argc, const char **argv)
         fsys::mount proc_mount;
         proc_mount.proc("/proc");
 
-        setgid(exec_gid);
-        setuid(exec_uid);
+        setgid((gid_t)exec_gid);
+        setuid((uid_t)exec_uid);
 
 #ifdef  HAVE_PERSONALITY
         if(exec_pmode)
@@ -350,7 +350,7 @@ int main(int argc, const char **argv)
             const char *shell[3] = {
                 env["SHELL"].c_str(),
                 "-l",
-                NULL,
+                nullptr,
             };
             umask(022);
             ::execve(shell[0], (char *const*)shell, (char *const *)create_env(env));
@@ -389,7 +389,7 @@ int main(int argc, const char **argv)
         ::exit(exiting);
     }
 
-	if(exit_code)
+	if(exit_code > 0)
 		error() << "*** shellit: " << reason;
 
 	return exit_code;

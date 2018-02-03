@@ -96,7 +96,7 @@ void fsys::current_path(const std::string& path, fsys_error& err)
 const std::string fsys::current_path(fsys_error& err)
 {
     char path[256];
-    if (NULL == getcwd(path, sizeof(path))) {
+    if (nullptr == getcwd(path, sizeof(path))) {
 		err = fsys::error();
 		return std::string();
 	}
@@ -105,7 +105,7 @@ const std::string fsys::current_path(fsys_error& err)
 
 bool fsys::permissions(const std::string& path, perms_t value, fsys_error& err)
 {
-    if(chmod(path.c_str(), (int)value)) {
+    if(chmod(path.c_str(), (mode_t)value)) {
 		err = fsys::error();
 		return false;
 	}
@@ -114,7 +114,7 @@ bool fsys::permissions(const std::string& path, perms_t value, fsys_error& err)
 
 bool fsys::owner(const std::string& path, int uid, int gid, fsys_error& err)
 {
-	if(chown(path.c_str(), uid, gid)) {
+	if(chown(path.c_str(), (uid_t)uid, (gid_t)gid)) {
 		err = fsys::error();
 		return false;
 	}
@@ -123,9 +123,7 @@ bool fsys::owner(const std::string& path, int uid, int gid, fsys_error& err)
 
 bool fsys::exists(const std::string& path)
 {
-    if(access(path.c_str(), F_OK))
-        return false;
-    return true;
+    return access(path.c_str(), F_OK) == 0;
 }
 
 bool fsys::equal(const std::string& l, const std::string& r)
@@ -141,9 +139,9 @@ std::string fsys::extname(const std::string& path)
 {
     std::string::size_type lpos = path.find_last_of("/\\:");
     if(lpos == std::string::npos)
-        lpos = path.find_last_of(".");
+        lpos = path.find_last_of('.');
     else
-        lpos = path.substr(++lpos).find_last_of(".");
+        lpos = path.substr(++lpos).find_last_of('.');
     if(lpos == std::string::npos)
         return std::string();
 
@@ -178,7 +176,7 @@ std::string fsys::basename(const std::string& path, const std::string& ext)
     if(ext.size() && ends_with(lower_case(out), lower_case(ext)))
         out = out.substr(0, out.size() - ext.size());
 #else
-    if(ext.size() && ends_with(out, ext))
+    if(!ext.empty() && ends_with(out, ext))
         out = out.substr(0, out.size() - ext.size());
 #endif
     return out;
@@ -186,7 +184,7 @@ std::string fsys::basename(const std::string& path, const std::string& ext)
 
 bool fsys::create_directory(const std::string& path, perms_t mode, fsys_error& err) 
 {
-    if(::mkdir(path.c_str(), (int)mode)) {
+    if(::mkdir(path.c_str(), (mode_t)mode)) {
 		err =  fsys::error();
 		return false;
 	}

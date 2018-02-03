@@ -17,7 +17,7 @@
 
 #include <iostream>
 #include <algorithm>
-#include <assert.h>
+#include <cassert>
 #include "args.hpp"
 
 static args::Option *first = nullptr;
@@ -319,7 +319,7 @@ args::args(const char **list, mode_t mode)
 
 	offset = list;
 	while(*list)
-		argv.push_back(*(list++));
+		argv.emplace_back(*(list++));
 }
 
 void args::help()
