@@ -6,9 +6,11 @@ Debug/
 Release/
 doc/
 
-.idea/
+.idea/workspace.xml
+.idea/tasks.xml
 .codelite/
 *.xcodeproj/
+*.iws
 
 _*
 .ninja*
