@@ -44,14 +44,18 @@ time_t fsys::last_write_time(const std::string& path, fsys_error& err)
 
 fsys::status_t fsys::status(const std::string& path, fsys_error& err)
 {
-    struct stat ino;
-    file_status info;
+    struct stat ino{};
+    file_status info{};
+
+    memset(&info, sizeof(info), 0);
+    memset(&info, sizeof(ino), 0);
+
     info.type = file_type::none;
     info.perms = file_perms::no_perms;
 	info.access = info.modify = info.change = 0;
 
     if(!stat(path.c_str(), &ino)) {
-        info.perms = (file_perms)((ino.st_mode) & 07777); 
+        info.perms = (file_perms)((ino.st_mode) & 07777);
         info.access = ino.st_atime;
         info.modify = ino.st_mtime;
         info.change = ino.st_ctime;
@@ -100,7 +104,7 @@ const std::string fsys::current_path(fsys_error& err)
 		err = fsys::error();
 		return std::string();
 	}
-    return path;
+    return std::string(path);
 }
 
 bool fsys::permissions(const std::string& path, perms_t value, fsys_error& err)
@@ -303,7 +307,7 @@ bool fsys::copy_file(const std::string& from, const std::string& to, fsys_error&
 
 fsys_error fsys::error()
 {
-	return fsys_error(errno);
+	return {errno};
 }
 
 bad_pkg::bad_pkg(const std::string& path)

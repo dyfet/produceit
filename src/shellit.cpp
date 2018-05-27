@@ -22,43 +22,44 @@
 #include "args.hpp"
 #include "keyfile.hpp"
 #include "output.hpp"
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/utsname.h>
 #include <sys/wait.h>
 
 using namespace std;
 
-static args::flag helpflag('h', "--help", "display this list");
-static args::flag althelp('?', nullptr, nullptr);
-static args::string arch('a', "--arch", "cpu architecture");
-static args::flag shell('s', "--shell", "apply current shell");
-static args::flag verbose('v', "--verbose", "display operations");
-static args::flag xserver('X', nullptr, "X server support");
-static keyfile etc_config;
+namespace { // anon namespace for application
+args::flag helpflag('h', "--help", "display this list");
+args::flag althelp('?', nullptr, nullptr);
+args::string arch('a', "--arch", "cpu architecture");
+args::flag shell('s', "--shell", "apply current shell");
+args::flag verbose('v', "--verbose", "display operations");
+args::flag xserver('X', nullptr, "X server support");
+keyfile etc_config;
 
-static void cpu(std::string id)
-{
-    if(id[0] == 'i' && id[2] == '8' && id[3] == '6')
+void cpu(std::string id) {
+    if (id[0] == 'i' && id[2] == '8' && id[3] == '6')
         id = "i386";
-    else if(id == std::string("x86_64"))
+    else if (id == std::string("x86_64"))
         id = "amd64";
     auto qemu = etc_config["cpu"][id];
-    if(qemu.length() > 0)
+    if (qemu.length() > 0)
         ::setenv("QEMU_CPU", qemu.c_str(), 1);
     arch.set(id);
-    if(id == "amd64")
+    if (id == "amd64")
         ::setenv("ARCH", "x86_64", 1);
     else
         ::setenv("ARCH", (*arch).c_str(), 1);
 }
+} // end anon namespace
 
 int main(int argc, const char **argv)
 {
 	int exit_code = 0;
 	std::string reason;
 
-    ::signal(SIGINT, SIG_IGN);
-    ::signal(SIGTERM, SIG_IGN);
+    ::signal(SIGINT, SIG_IGN); // NOLINT
+    ::signal(SIGTERM, SIG_IGN); // NOLINT
 
 	try {
         std::string cwd, distro, qemu_static;
@@ -123,7 +124,7 @@ int main(int argc, const char **argv)
 		if(!exec_uid && *exec_paths)
 			throw runtime_error("root access only for login");
 
-        struct utsname uts;
+        struct utsname uts = {0};
         uname(&uts);
 		if(is(arch)) {
             if(etc_config["qemu"][*arch].length() > 0)
@@ -255,7 +256,7 @@ int main(int argc, const char **argv)
         if(copy.length() == 0)
             copy = "/etc/shadow /etc/gshadow /etc/group /etc/passwd /etc/sudoers /etc/hosts /etc/resolv.conf /etc/hostname";
         auto files = split(copy, " ,;");
-        for(const auto path : files) {
+        for(const auto& path : files) {
             if(is(verbose))
                 output() << "copy " << path;
             if(!fsys::copy_file(path, distrofs + "/" + path))
@@ -353,7 +354,7 @@ int main(int argc, const char **argv)
                 nullptr,
             };
             umask(022);
-            ::execve(shell[0], (char *const*)shell, (char *const *)create_env(env));
+            ::execve(shell[0], (char *const*)shell, (char *const *)create_env(env)); // NOLINT
         }
         else {
             ::setenv("CWD", cwd.c_str(), 1);
@@ -361,7 +362,7 @@ int main(int argc, const char **argv)
             endpwent();
             endgrent();
             umask(exec_mask);
-            ::execvp(exec_paths[0], (char *const*)exec_paths);
+            ::execvp(exec_paths[0], (char *const*)exec_paths); // NOLINT
         }
         ::exit(-1);
 	}

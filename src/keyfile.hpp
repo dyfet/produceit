@@ -24,7 +24,13 @@
 class keyfile final
 {
 public:
-	inline keyfile() {};
+	keyfile(const keyfile&) = delete;
+	keyfile& operator=(const keyfile&) = delete;
+
+	keyfile() = default;
+	keyfile(const std::string& path) : keyfile() {
+		load(path);
+	}
 
 	inline std::map<std::string, std::string>& operator[](const std::string& section) {
 		return sections[section];
@@ -37,9 +43,6 @@ public:
 	bool load(const std::string& path);
 
 private:
-	keyfile(const keyfile&) = delete;
-	keyfile& operator=(const keyfile&) = delete;
-
 	std::map<std::string, std::map<std::string, std::string>> sections;
 };
 

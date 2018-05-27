@@ -26,11 +26,14 @@
 class args final
 {
 public:
-	typedef enum { NONE, PLUS, DASH, ALL } mode_t;
+	using mode_t = enum { NONE, PLUS, DASH, ALL };
 
 	class Option
 	{
 	public:
+		Option(const Option&) = delete;
+		Option& operator=(const Option&) = delete;
+
 		inline operator bool() const {
 			return used_count > 0;
 		}
@@ -59,23 +62,18 @@ public:
 		
 	private:
 		Option *next;
-
-		Option(const Option&) = delete;
-		Option& operator=(const Option&) = delete;
 	};
 
 	class list final
 	{
 	public:
-		inline list() noexcept {}
-
-		const std::string operator[](unsigned index);
-
-		size_t size();
-
-	private:
 		list& operator=(const list&) = delete;
 		list(const list&) = delete;
+
+		inline list() noexcept = default;
+
+		const std::string operator[](unsigned index);
+		size_t size();
 	};	
 
 	class flag final : public Option
@@ -116,11 +114,11 @@ public:
 	public:
 		string(char shortopt, const char *longopt = nullptr, const char *help = nullptr, const char *type = "text", const std::string dvalue = std::string()) noexcept;
 			
-		inline void set(const std::string string) {
+		inline void set(const std::string& string) {
 			text = string;
 		}
 
-		inline string& operator=(const std::string string) {
+		inline string& operator=(const std::string& string) {
 			text = string;
 			return *this;
 		}
@@ -185,6 +183,9 @@ public:
 		void assign(const char *value) final;
 	};
 
+    args(const args& from) = delete;
+    args& operator=(const args& from) = delete;
+
 	args(const char **argv, mode_t mode = NONE);
 	
 	inline const std::string operator[](unsigned index) const {
@@ -215,9 +216,6 @@ private:
 	std::string name;
 	const char **offset;
 	long value;
-
-	args(const args& from) = delete;
-	args& operator=(const args& from) = delete;
 };
 
 class bad_arg final : public std::exception

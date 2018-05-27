@@ -23,8 +23,11 @@
 class dir
 {
 public:
-    typedef fsys::perms_t perms_t;
-    typedef fsys::file_perms file_perms;
+	using perms_t = fsys::perms_t;
+	using file_perms = fsys::file_perms;
+
+	dir(const dir&) = delete;
+	dir& operator=(const dir&) = delete;
 
     dir(const std::string& path) noexcept;
 
@@ -76,13 +79,9 @@ protected:
     struct stateinfo *state;
 
     fsys_error err;
-
-private:
-    dir(const dir&) = delete;
-    dir& operator=(const dir&) = delete;
 };
 
-typedef	dir dir_t;
+using dir_t = dir;
 
 /*!
  * A directory class to manipulate directories and process directory trees.

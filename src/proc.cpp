@@ -17,9 +17,9 @@
 
 #include <sys/wait.h>
 #include <unistd.h>
-#include <stdlib.h>
+#include <cstdlib>
 #include <fcntl.h>
-#include <limits.h>
+#include <climits>
 #include "proc.hpp"
 
 using namespace std;
@@ -39,7 +39,7 @@ const char **create_env(const std::map<string,string>& env)
 void fork_command(const char **argv, bool output)
 {
 	if(!fork_handler(output)) {
-		execvp(*argv, (char *const *)argv);
+		execvp(*argv, (char *const *)argv); // NOLINT
 		cerr << "*** failed to execute " << *argv << endl;
 		exit(-1);
 	}
@@ -60,7 +60,7 @@ bool fork_handler(bool output)
 	::signal(SIGTERM, SIG_DFL);
 	
 	if(!output) {
-		auto fd = ::open("/dev/null", O_WRONLY);
+		auto fd = ::open("/dev/null", O_WRONLY); // NOLINT
 		::dup2(fd, 1);
 		::close(fd);
 	}

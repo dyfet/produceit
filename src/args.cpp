@@ -20,9 +20,11 @@
 #include <cassert>
 #include "args.hpp"
 
-static args::Option *first = nullptr;
-static args::Option *last = nullptr;
-static args *instance = nullptr;
+namespace {
+args::Option *first = nullptr;
+args::Option *last = nullptr;
+args *instance = nullptr;
+}
 
 const std::string args::exec_path()
 {
@@ -61,8 +63,7 @@ args::Option::Option(char shortopt, const char *longopt, const char *value, cons
 }
 
 args::Option::~Option()
-{
-}
+= default;
 
 void args::Option::fail(const char *reason)
 {

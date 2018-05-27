@@ -46,9 +46,10 @@ namespace fsys {
 
 	class mountpoint
 	{
+	public:
 		mountpoint(const mountpoint&) = delete;
 		const mountpoint& operator=(const mountpoint&) = delete;
-	public:
+
 		mountpoint(const std::string& where);
 		~mountpoint();
 
@@ -64,10 +65,10 @@ namespace fsys {
 			verbose = flag;
 		}
 
-		void release(void);
+		void release();
 
 	protected:
-		inline mountpoint() {}
+		inline mountpoint() = default;
 	
 		std::string path;
 		static bool verbose;

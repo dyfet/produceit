@@ -43,7 +43,7 @@ public:
         from.errcode = 0;
     }
 
-    inline bool operator=(const fsys_error& other) const noexcept {
+    inline bool operator==(const fsys_error& other) const noexcept {
         return errcode == other.errcode;
     }
 
@@ -68,10 +68,7 @@ public:
         return *this;
     }
 
-    inline fsys_error& operator=(const fsys_error& copy) noexcept {
-        errcode = copy.errcode;
-        return *this;
-    }
+    inline fsys_error& operator=(const fsys_error& copy) noexcept = default;
 
     inline fsys_error& operator=(fsys_error&& from) noexcept {
         errcode = from.errcode;
@@ -154,7 +151,7 @@ namespace fsys {
         return __x;
     }
 
-    typedef	file_perms perms_t;
+    using perms_t = file_perms;
 
     enum class file_type {
         none = 0,
@@ -177,7 +174,7 @@ namespace fsys {
         uintmax_t size;
     };
 
-    typedef file_status status_t;
+    using status_t = file_status;
 
     extern fsys_error lasterr;
     fsys_error error();

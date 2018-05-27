@@ -24,168 +24,167 @@
 #include "args.hpp"
 #include "keyfile.hpp"
 #include "output.hpp"
-#include <stdlib.h>
+#include <cstdlib>
 #include <sys/utsname.h>
 #include <sys/wait.h>
 
 using namespace std;
 
-static args::flag helpflag('h', "--help", "display this list");
-static args::flag althelp('?', nullptr, nullptr);
-static args::string arch('a', "--arch", "cpu architecture");
-static args::flag binonly('b', "--binary", "binary architecture only");
-static args::flag depends('d', "--depends", "install build dependencies");
-static args::flag update('u', "--update", "update before packaging");
-static args::flag verbose('v', "--verbose", "display operations");
-static keyfile etc_config;
+namespace { // anon namespace exclusive to buildit
+args::flag helpflag('h', "--help", "display this list");
+args::flag althelp('?', nullptr, nullptr);
+args::string arch('a', "--arch", "cpu architecture");
+args::flag binonly('b', "--binary", "binary architecture only");
+args::flag depends('d', "--depends", "install build dependencies");
+args::flag update('u', "--update", "update before packaging");
+args::flag verbose('v', "--verbose", "display operations");
+keyfile etc_config;
 
-static const char *apt_update[] = {
+const char *apt_update[] = {
     "apt-get update",
     "/usr/bin/apt-get",
     "update",
-    NULL,
+    nullptr,
 };
 
-static const char *apt_upgrade[] = {
+const char *apt_upgrade[] = {
     "apt-get dist-upgrade",
     "/usr/bin/apt-get",
     "-y",
     "dist-upgrade",
-    NULL,
+    nullptr,
 };
 
-static const char *apt_autoremove[] = {
+const char *apt_autoremove[] = {
     "apt-get autoremove",
     "/usr/bin/apt-get",
     "-y",
     "autoremove",
-    NULL,
+    nullptr,
 };
 
-static const char *apt_autoclean[] = {
+const char *apt_autoclean[] = {
     "apt-get autoclean",
     "/usr/bin/apt-get",
     "autoclean",
-    NULL,
+    nullptr,
 };
 
-static const char *dnf_update[] = {
+const char *dnf_update[] = {
     "dnf update",
     "/usr/bin/dnf",
     "update",
-    NULL,
+    nullptr,
 };
 
-static const char *dnf_clean[] = {
+const char *dnf_clean[] = {
     "dnf clean",
     "/usr/bin/dnf",
     "clean",
     "all",
-    NULL,
+    nullptr,
 };
 
-static void cpu(std::string id)
-{
-    if(id[0] == 'i' && id[2] == '8' && id[3] == '6')
+void cpu(std::string id) {
+    if (id[0] == 'i' && id[2] == '8' && id[3] == '6')
         id = "i386";
-    else if(id == std::string("x86_64"))
+    else if (id == std::string("x86_64"))
         id = "amd64";
     auto qemu = etc_config["cpu"][id];
-    if(qemu.length() > 0)
+    if (qemu.length() > 0)
         ::setenv("QEMU_CPU", qemu.c_str(), 1);
     arch.set(id);
-    if(id == "amd64")
+    if (id == "amd64")
         ::setenv("ARCH", "x86_64", 1);
     else
         ::setenv("ARCH", (*arch).c_str(), 1);
 }
 
-static void debian(const std::string& pkg)
-{
+void debian(const std::string &pkg) {
     fsys::mount tmp_mount("/tmp", fsys::file_perms::temporary);
     fsys::create_directory("/tmp/buildd");
     std::string from = "/var/origin/" + pkg;
     std::ifstream dsc(from);
     std::string buffer;
     std::vector<std::string> deps;
-    while(std::getline(dsc, buffer)) {
-        if(buffer.substr(0, 14) == "Build-Depends:") {
+    while (std::getline(dsc, buffer)) {
+        if (buffer.substr(0, 14) == "Build-Depends:") {
             auto list = split(buffer.substr(14), ",");
-            for(auto item : list) {
+            for (const auto &item : list) {
                 deps.push_back(strip(item));
             }
         }
     }
     dsc.close();
 
-    if(fork_handler(is(verbose)))
+    if (fork_handler(is(verbose)))
         return;
 
     // not using depends yet...
 
     fsys::current_path("/tmp/buildd");
-    std::string pkgclean = pkg.substr(0, pkg.find_first_of("_")) + "-build-deps";
+    std::string pkgclean = pkg.substr(0, pkg.find_first_of('_')) + "-build-deps";
 
     const char *bflag = "-b";
-    if(is(binonly))
+    if (is(binonly))
         bflag = "-B";
 
     try {
-        const char *dpkg_source[] = {"dpkg-source", "-x", from.c_str(), "source", NULL}; 
-        const char *dpkg_build[] = {"dpkg-buildpackage", bflag, "-us", NULL};
-        const char *dpkg_depends[] = {"mk-build-deps", "-i", NULL};
-        const char *dpkg_clean[] = {"apt-get", "-y", "purge", "--auto-remove", pkgclean.c_str(), NULL};
+        const char *dpkg_source[] = {"dpkg-source", "-x", from.c_str(), "source", nullptr};
+        const char *dpkg_build[] = {"dpkg-buildpackage", bflag, "-us", nullptr};
+        const char *dpkg_depends[] = {"mk-build-deps", "-i", nullptr};
+        const char *dpkg_clean[] = {"apt-get", "-y", "purge", "--auto-remove", pkgclean.c_str(), nullptr};
 
-        fork_command(dpkg_source, *verbose);
+        fork_command(dpkg_source, is(verbose));
         fsys::current_path("source");
-        if(is(depends))
-            fork_command(dpkg_depends, *verbose);
-        fork_command(dpkg_build, *verbose);
-        if(is(depends))
-            fork_command(dpkg_clean, *verbose);
+        if (is(depends))
+            fork_command(dpkg_depends, is(verbose));
+        fork_command(dpkg_build, is(verbose));
+        if (is(depends))
+            fork_command(dpkg_clean, is(verbose));
         dir results("..");
         std::string entry;
         bool changes = false;
-        while((entry = results.get()) != std::string()) {
-            if(entry.substr(entry.find_last_of(".") + 1) == "changes") {
+        while ((entry = results.get()) != std::string()) {
+            if (entry.substr(entry.find_last_of('.') + 1) == "changes") {
                 changes = true;
-                if(!fsys::copy_dsc("../" + entry, "/var/results")) {
+                if (!fsys::copy_dsc("../" + entry, "/var/results")) {
                     cerr << "*** buildit: " + entry + ": failed to copy out" << endl;
                     throw -1;
                 }
             }
         }
-        if(!changes)
+        if (!changes)
             error() << "## " + pkg + ": failed";
         else
-            output() << "## " + pkg + ": success"; 
+            output() << "## " + pkg + ": success";
     }
-    catch(int exiting) {
+    catch (int exiting) {
         ::exit(exiting);
     }
     ::exit(0);
 }
 
-static void task(const char *argv[], const char *envp[])
-{
+void task(const char *argv[], const char *envp[]) {
     fsys::mount tmp_mount("/tmp", fsys::file_perms::temporary);
     fsys::create_directory("/tmp/buildd");
 
-    if(fork_handler(is(verbose)))
+    if (fork_handler(is(verbose)))
         return;
 
     fsys::current_path("/tmp/buildd");
-    execve(argv[0], (char *const*)argv, (char *const *)envp);
-	::exit(-1);
+    execve(argv[0], (char *const *) argv, (char *const *) envp); // NOLINT
+    ::exit(-1);
 }
+} // anonymous namespace
 
 int main(int argc, const char **argv)
 {
 	int exit_code = 0;
 	std::string reason;
 
-    ::signal(SIGINT, SIG_IGN);
-    ::signal(SIGTERM, SIG_IGN);
+    ::signal(SIGINT, SIG_IGN); // NOLINT
+    ::signal(SIGTERM, SIG_IGN); // NOLINT
 
 	try {
         std::string distro, qemu_static;
@@ -241,7 +240,7 @@ int main(int argc, const char **argv)
 		auto homefs = etc_config["system"]["homefs"] + "/root";
         auto source = etc_config["system"]["source"];
 
-		struct utsname uts;
+		struct utsname uts = {0};
         uname(&uts);
         if(is(arch)) {
             if(etc_config["qemu"][*arch].length() > 0)
@@ -307,7 +306,7 @@ int main(int argc, const char **argv)
         fsys::tmpdir prefix(etc_config["system"]["prefix"]);
         fsys::tmpdir session(*prefix + "/" + std::to_string(getpid()));
         fsys::tmpdir sources(*prefix + "/sources");
-        fsys::mount::trace(*verbose);
+        fsys::mount::trace(is(verbose));
 
         if(is(verbose)) {
             output() << "creating " << *session;
@@ -327,7 +326,7 @@ int main(int argc, const char **argv)
         if(copy.length() == 0)
             copy = "/etc/shadow /etc/gshadow /etc/group /etc/passwd /etc/sudoers /etc/hosts /etc/resolv.conf /etc/hostname";
         auto files = split(copy, " ,;");
-        for(auto path : files) {
+        for(const auto& path : files) {
             if(is(verbose))
                 output() << "copy " << path;
             if(!fsys::copy_file(path, distrofs + "/" + path))
@@ -343,7 +342,7 @@ int main(int argc, const char **argv)
             else
                 cp = pkg_paths[pkg_count];
             const char *ext = strrchr(cp, '.');
-            int len = strlen(cp);
+            auto len = strlen(cp);
             if(len > 7 && !strcmp(cp + len - 7, ".src.rpm")) {
                 if(!fsys::copy_file(pkg_paths[pkg_count], source + "/" + cp))
                     throw bad_pkg(cp);
@@ -491,7 +490,7 @@ int main(int argc, const char **argv)
         ::exit(exiting);
     }
 
-	if(exit_code)
+	if(exit_code > 0)
 		error() << "*** buildit: " << reason;
 
 	return exit_code;
