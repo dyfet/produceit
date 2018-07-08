@@ -40,8 +40,8 @@ ARGV.each() do |file; ext, basename, origin|
   ext = File.extname(file)
   basename = File.basename(file)
 
-  abort("*** dsc-archive: #{basename}: not found") unless File.file?(file)
-  abort("*** dsc-archive: #{basename}: not debian source control") unless EXTS.include?(ext)
+  abort("*** dsc-remove: #{basename}: not debian source control") unless EXTS.include?(ext)
+  exit unless File.file?(file)
     
   origin = File.dirname(file)
   print "Removing... #{basename}...\n" if verbose === true
@@ -50,7 +50,6 @@ ARGV.each() do |file; ext, basename, origin|
       next unless line=~/^Files/...line=~/^$/
       next if line =~/^$/ || line.strip! =~ /^Files/
       entry = line.split(' ')[-1].prepend(origin + '/')
-
       next unless File.file?(entry)
       print "Removing #{File.basename(entry)}...\n" if verbose === true
       FileUtils.remove_file(entry, force)
