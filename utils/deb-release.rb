@@ -26,10 +26,11 @@ end.parse!
 abort(banner) if ARGV.size != 1
 path = ARGV[0]
 release = "#{path}/Release"
+tmpfile = "#{path}/Release.tmp"
 abort("deb-release: #{path}: not a directory") if !File.directory?(path)
 abort("deb-release: #{path}: no release file") if !File.exists?(release)
 
-relinfo = {:Archive => 'stretch'}
+relinfo = {:Archive => 'stretch', :Codename => '', :Origin => '', :Label => '', :Architecture => 'all'}
 
 File.open(release, 'r') do |fp; line, key, value|
   while(line = fp.gets)
@@ -39,3 +40,16 @@ File.open(release, 'r') do |fp; line, key, value|
       relinfo[key.to_sym] = value
   end
 end
+
+if verbose
+  p relinfo
+end
+
+File.open(tmpfile, 'w') do |tmp|
+  tmp << "Archive: #{relinfo[:Archive]}\n" unless relinfo[:Archive] == ""
+  tmp << "Codename: #{relinfo[:Codename]}\n" unless relinfo[:Codename] == ""
+  tmp << "Origin: #{relinfo[:Origin]}\n" unless relinfo[:Origin] == ""
+  tmp << "Label: #{relinfo[:Label]}\n"  unless relinfo[:Label] == ""
+  tmp << "Architecture: #{relinfo[:Architecture]}\n" unless relinfo[:Architecture] == ""
+end
+ 
