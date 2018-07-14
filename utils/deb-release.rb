@@ -7,7 +7,8 @@
 
 ['optparse', 'fileutils'].each {|mod| require mod}
 
-banner = 'Usage: deb-release [options] archive-directory'
+META = ['Packages', 'Packages.gz', 'Packages.bz2', 'Sources', 'Sources.gz', 'Sources.bz2']
+banner = 'Usage: deb-release [options] [archive-directory]'
 verbose = false
 
 OptionParser.new do |opts|
@@ -23,10 +24,13 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-abort(banner) if ARGV.size != 1
-path = ARGV[0]
+abort(banner) if ARGV.size > 1
+if ARGV.size > 0
+  path = ARGV[0]
+else
+  path = '.'
+end
 release = "#{path}/Release"
-tmpfile = "#{path}/Release.tmp"
 abort("deb-release: #{path}: not a directory") if !File.directory?(path)
 abort("deb-release: #{path}: no release file") if !File.exists?(release)
 
@@ -45,11 +49,39 @@ if verbose
   p relinfo
 end
 
-File.open(tmpfile, 'w') do |tmp|
+Dir.chdir(path)
+File.open('Release.tmp', 'w') do |tmp|
   tmp << "Archive: #{relinfo[:Archive]}\n" unless relinfo[:Archive] == ""
   tmp << "Codename: #{relinfo[:Codename]}\n" unless relinfo[:Codename] == ""
   tmp << "Origin: #{relinfo[:Origin]}\n" unless relinfo[:Origin] == ""
   tmp << "Label: #{relinfo[:Label]}\n"  unless relinfo[:Label] == ""
   tmp << "Architecture: #{relinfo[:Architecture]}\n" unless relinfo[:Architecture] == ""
+  tmp << "Date: " << `date -R -u`
+
+  tmp << "MD5Sum:\n"
+  META.each do |file, sum, size|
+    next unless File.exists?(file)
+    sum=`md5sum "#{file}"`.split(' ').first
+    size=`wc -c "#{file}"`.lstrip
+    tmp << " #{sum} #{size}"
+  end
+
+  tmp << "SHA1:\n"
+  META.each do |file, sum, size|
+    next unless File.exists?(file)
+    sum=`sha1sum "#{file}"`.split(' ').first
+    size=`wc -c "#{file}"`.lstrip
+    tmp << " #{sum} #{size}"
+  end
+
+  tmp << "SHA256:\n"
+  META.each do |file, sum, size|
+    next unless File.exists?(file)
+    sum=`sha256sum "#{file}"`.split(' ').first
+    size=`wc -c "#{file}"`.lstrip
+    tmp << " #{sum} #{size}"
+  end
+
+  system 'mv', 'Release.tmp', 'Release'
 end
  
