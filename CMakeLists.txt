@@ -53,10 +53,6 @@ if(CMAKE_MAINTAINER)
         COMMAND git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" "v${PROJECT_VERSION}" 2>/dev/null || git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" HEAD   
     )
 
-    add_custom_target(source
-        DEPENDS dist
-    )
-
     add_custom_target(distclean
         COMMAND ${CMAKE_BUILD_TOOL} clean
         COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.tar.gz"
@@ -83,12 +79,6 @@ if(CMAKE_CROSSCOMPILING)
     set(CPACK_DEBIAN_PACKAGE_DEPENDS "rpm, ruby, gnupg")
     include(CPack)
 elseif(CMAKE_MAINTAINER)
-    add_custom_target(srpm
-        DEPENDS dist
-        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.rpm"
-        COMMAND rpmbuild -bs --nodeps "${CMAKE_CURRENT_SOURCE_DIR}/produceit.spec"
-    )
-
     add_custom_target(pdf
         WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc/latex"
         COMMAND make
