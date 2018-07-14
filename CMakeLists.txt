@@ -35,7 +35,7 @@ add_subdirectory(src)
 
 # these give access to docs and support files when cmake is exported to an ide
 
-add_custom_target(support SOURCES produceit.conf produceit.spec ${scripts} config.hpp.in Doxyfile.in)
+add_custom_target(support SOURCES produceit.conf ${scripts} config.hpp.in Doxyfile.in)
 
 add_custom_target(docs SOURCES LICENSE ${markdown}
     COMMAND doxygen Doxyfile
