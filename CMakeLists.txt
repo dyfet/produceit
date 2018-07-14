@@ -60,6 +60,9 @@ if(CMAKE_MAINTAINER)
         COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/*.pdf"
         COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/doc"
     )
+
+    include("${CMAKE_CURRENT_SOURCE_DIR}/redhat/include.cmake" OPTIONAL)
+    include("${CMAKE_CURRENT_SOURCE_DIR}/debian/include.cmake" OPTIONAL)
 endif()
 
 # if cross-compiling, can also generate cross-build packages...
