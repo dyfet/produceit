@@ -41,6 +41,8 @@ shellit
 archiveit
 core
 
+*.ddeb
+*.buildinfo
 *.tar.gz
 *.rpm
 *.deb
