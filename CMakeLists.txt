@@ -42,8 +42,8 @@ add_custom_target(docs SOURCES LICENSE ${markdown}
 )
 
 install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/deb-release.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME deb-release )
-install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/dsc-archive.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME dsc-archive )
-install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/dsc-remove.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME dsc-remove )
+install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/deb-archive.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME deb-archive )
+install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/deb-remove.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME deb-remove )
 install(FILES ${CMAKE_SOURCE_DIR}/produceit.conf DESTINATION ${CMAKE_INSTALL_SYSCONFDIR})
 
 if(CMAKE_MAINTAINER)
