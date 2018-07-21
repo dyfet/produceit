@@ -29,13 +29,15 @@ set(CMAKE_VISIBILITY_INLINES_HIDDEN 1)
 set(PRODUCEIT_LIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}/produceit")
 
 file(GLOB scripts utils/*.rb)
+file(GLOB bman1 src/*.1)
+file(GLOB uman1 utils/*.1)
 file(GLOB markdown *.md)
 
 add_subdirectory(src)
 
 # these give access to docs and support files when cmake is exported to an ide
 
-add_custom_target(support SOURCES produceit.conf ${scripts} config.hpp.in Doxyfile.in)
+add_custom_target(support SOURCES produceit.conf ${scripts} config.hpp.in Doxyfile.in ${bman1} ${uman1})
 
 add_custom_target(docs SOURCES LICENSE ${markdown}
     COMMAND doxygen Doxyfile
@@ -45,6 +47,8 @@ install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/deb-release.rb DESTINATION ${CMAKE_IN
 install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/deb-archive.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME deb-archive )
 install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/deb-remove.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME deb-remove )
 install(FILES ${CMAKE_SOURCE_DIR}/produceit.conf DESTINATION ${CMAKE_INSTALL_SYSCONFDIR})
+
+install(FILES ${bman1} ${uman1} DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
 
 if(CMAKE_MAINTAINER)
     add_custom_target(dist

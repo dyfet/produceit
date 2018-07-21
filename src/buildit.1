@@ -1,0 +1,87 @@
+.\" buildit - build package in dedicated chroot
+.\" Copyright (C) 2018 Tycho Softworks
+.\"
+.\" This manual page is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc.,59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+.\"
+.\" This manual page is written especially for Debian GNU/Linux.
+.\"
+.TH buildit "1" "July 2018" "ProduceIt" "Tycho Softworks"
+.SH NAME
+buildit \- build package in dedicated chroot
+.SH SYNOPSIS
+.B buildit
+.RI [ options ]
+.I distro source\-packages...
+.br
+.SH DESCRIPTION
+This is a tool somewhat analgalous to debian pbuilder, but builds binary
+packages for each source package specified in a shellit managed distro chroot.
+This means that, unlike pbuilder, the build environment is not unpackaged and
+re-installed for every package build.  This makes for much faster builds, but
+does require management of the build environment itself such as thru shellit.
+
+The builds are done in a tmpfs to further improvement performance and
+reduce disk writes.  They are also made under the root account, so it
+is not tied to the properties and configurations of the shellit user.
+
+Builtit also uses the /var/archive directory to hold packages based on the
+distro (deb or rpm) and a special repo config to allow the use of this local
+package repo. This is used in particular so that you can build packages needed
+as dependencies for other packages and have a repo for the later packages to
+use and that the shellit contained distro can update from.
+
+Buildit is meant to produce binary packages from sources in redhat .src.rpm's
+and from debian .dsc (or .changes) files, based on the distro being used.
+The resulting binary packages, when successful, are copied back to the
+current directory buildit was ran from.
+.SH OPTIONS
+.TP
+.B \-\-arch
+Specify alternate architecture if the chroot is different from the host. This
+presumes qemu user mode emulation will be used and an appropriate qemu static
+binary is in the chroot itself.  This allows you to run an armhf chroot
+instance on an amd64 host, for example.
+.TP
+.B\-\-binary
+Produce arch specific binary packages only.  This supression production of
+arch independent packages, since they only need to be produced on one
+architecture.  For deb's, this means no .all.deb's will be made.
+.TP
+.B \-\-depends
+Attempts to install all required build dependencies before starting to
+build the package.  This is often done instead in advance thru shellit
+and so is often not needed.
+.TP
+.B \-\-update
+Update the chroot before starting the build.  This is useful if you
+are building a package that depends on a prior package build assuming
+the output from the prior build has been copied into the archive (for
+debian, perhaps using deb-archive).
+.TP
+.B \-\-verbose
+Provide info about mounting and unmounting of bind mounts when starting and
+exiting shellit.
+.SH AUTHOR
+.B buildit
+was written by David Sugar <tychosoft@gmail.com>.
+.SH "REPORTING BUGS"
+Report bugs to tychosoft@gmail.com.
+.SH COPYRIGHT
+Copyright \(co 2018 Tycho Softworks.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.
+
