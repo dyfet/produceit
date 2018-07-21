@@ -12,7 +12,7 @@ EXTS = ['.dsc', '.deb', '.changes']
 verbose = false
 preserve = true
 header = "Copying"
-banner = 'Usage: dsc-archive [options] [debian-files...] target-directory'
+banner = 'Usage: deb-archive [options] [debian-files...] target-directory'
 force = false
 move = false
 
@@ -48,7 +48,7 @@ end.parse!
 fileopts = {:force => force}
 
 abort(banner) if ARGV.size < 2
-abort("*** dsc-archive: #{target}: not a directory") unless File.directory?(target) 
+abort("*** deb-archive: #{target}: not a directory") unless File.directory?(target) 
 
 # process file list
 files.each() do |file; ext, basename, origin|
@@ -56,9 +56,9 @@ files.each() do |file; ext, basename, origin|
   basename = File.basename(file)
   dest = target + '/' + basename
 
-  abort("*** dsc-archive: #{basename}: not found") unless File.file?(file)
-  abort("*** dsc-archive: #{basename}: not debian source control") unless EXTS.include?(ext)
-  abort("*** dsc-archive: #{basename}: target exists") if File.file?(dest) && !force
+  abort("*** deb-archive: #{basename}: not found") unless File.file?(file)
+  abort("*** deb-archive: #{basename}: not debian source control") unless EXTS.include?(ext)
+  abort("*** deb-archive: #{basename}: target exists") if File.file?(dest) && !force
     
   origin = File.dirname(file)
   print "#{header} #{basename}...\n" if verbose === true

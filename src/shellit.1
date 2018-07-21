@@ -1,0 +1,73 @@
+.\" shellit - run distro in chroot
+.\" Copyright (C) 2018 Tycho Softworks
+.\"
+.\" This manual page is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc.,59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+.\"
+.\" This manual page is written especially for Debian GNU/Linux.
+.\"
+.TH shellit "1" "July 2018" "ProduceIt" "Tycho Softworks"
+.SH NAME
+shellit \- run distro in chroot
+.SH SYNOPSIS
+.B shellit
+.RI [ options ]
+.I distro
+.RI [ command... ]
+.br
+.SH DESCRIPTION
+This starts a user shell in a chroot of the chosen distro.  This user shell has
+the same identity of the current user that you are logged into the host os as,
+but with an entirely private distro specific instance of the home directory
+itself.
+
+Shellit creates bind mounts and a private namespace to run the chroot in. It
+also copies the current hosts passwd file.  It creates a special /var/archive
+directory to hold packages based on the distro (deb or rpm) and a special repo
+config to allow the use of this local package repo. This is used in particular
+so that you can build packages needed as dependencies for other packages and
+have a repo for the later packages to use and that the shellit contained distro
+can update from.
+
+Shellit normally produces a login shell within the chroot using your current
+user identity.  If instead command argument are passed, then shellit will run
+the command and arguments specified within the chroot and immediately return
+with the exit code status.
+.SH OPTIONS
+.TP
+.B \-\-arch
+Specify alternate architecture if the chroot is different from the host. This
+presumes qemu user mode emulation will be used and an appropriate qemu static
+binary is in the chroot itself.  This allows you to run an armhf chroot
+instance on an amd64 host, for example.
+.TP
+.B \-\-shell
+Execute the user's current shell (per $SHELL) in the chroot environment rather
+than the default shell (typically /bin/bash).
+.TP
+.B \-\-verbose
+Provide info about mounting and unmounting of bind mounts when starting and
+exiting shellit.
+.SH AUTHOR
+.B shellit
+was written by David Sugar <tychosoft@gmail.com>.
+.SH "REPORTING BUGS"
+Report bugs to tychosoft@gmail.com.
+.SH COPYRIGHT
+Copyright \(co 2018 Tycho Softworks.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.
+

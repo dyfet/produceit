@@ -9,17 +9,12 @@
 
 EXTS = ['.dsc', '.deb', '.changes']
 
-banner = 'Usage: dsc-remove [options] debian-files...'
+banner = 'Usage: deb-remove [options] debian-files...'
 verbose = false
-force = false
 
 # parse main arguments
 OptionParser.new do |opts|
   opts.banner = banner
-
-  opts.on('-f', '--[no-]force', 'force overwrite') do |f|
-    force = f
-  end
 
   opts.on_tail('-h', '--help', 'Show this message') do
     puts opts
@@ -35,12 +30,10 @@ abort(banner) if ARGV.size < 1
 
 # process file list
 ARGV.each() do |file; ext, basename, origin|
-  next if force && !File.file?(file)
-
   ext = File.extname(file)
   basename = File.basename(file)
 
-  abort("*** dsc-remove: #{basename}: not debian source control") unless EXTS.include?(ext)
+  abort("*** deb-remove: #{basename}: not debian source control") unless EXTS.include?(ext)
   exit unless File.file?(file)
     
   origin = File.dirname(file)
