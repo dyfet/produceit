@@ -45,8 +45,8 @@ ARGV.each() do |file; ext, basename, origin|
       entry = line.split(' ')[-1].prepend(origin + '/')
       next unless File.file?(entry)
       print "Removing #{File.basename(entry)}...\n" if verbose === true
-      FileUtils.remove_file(entry, force)
+      FileUtils.remove_file(entry)
     end
   end unless ext === '.deb'
-  FileUtils.remove_file(file, force)
+  FileUtils.remove_file(file)
 end
