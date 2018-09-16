@@ -127,7 +127,7 @@ int main(int argc, const char **argv)
 		if(!exec_uid && *exec_paths)
 			throw runtime_error("root access only for login");
 
-        struct utsname uts = {0};
+        struct utsname uts{};
         uname(&uts);
 		if(is(arch)) {
             if(etc_config["qemu"][*arch].length() > 0)
@@ -185,7 +185,7 @@ int main(int argc, const char **argv)
         auto homeuser = homefs + "/" + distro;
         if(!fsys::exists(homeuser)) {
             fsys::file_perms mask = fsys::file_perms::owner_all | fsys::file_perms::group_all;
-            fsys:create_directory(homefs, fsys::file_perms::owner_all | fsys::file_perms::group_read | fsys::file_perms::group_exe | fsys::file_perms::others_read | fsys::file_perms::others_exe);
+            fsys::create_directory(homefs, fsys::file_perms::owner_all | fsys::file_perms::group_read | fsys::file_perms::group_exe | fsys::file_perms::others_read | fsys::file_perms::others_exe);
             if(!fsys::create_directory(homeuser, mask))
                 throw bad_path("homefs/" + distro);
             fsys::permissions(homeuser, mask | fsys::file_perms::set_gid_on_exe);

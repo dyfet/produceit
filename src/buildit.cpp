@@ -240,7 +240,7 @@ int main(int argc, const char **argv)
 		auto homefs = etc_config["system"]["homefs"] + "/root";
         auto source = etc_config["system"]["source"];
 
-        struct utsname uts = {0};
+        struct utsname uts{};
         uname(&uts);
         if(is(arch)) {
             if(etc_config["qemu"][*arch].length() > 0)
