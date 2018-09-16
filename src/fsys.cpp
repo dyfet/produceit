@@ -26,6 +26,8 @@ using namespace std;
 
 fsys_error fsys::lasterr = 0;
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCDFAInspection"
 bool fsys::is_hidden_file(const std::string& path)
 {
     std::string::size_type pos = path.find_last_of("/\\:");
@@ -35,6 +37,7 @@ bool fsys::is_hidden_file(const std::string& path)
         return true;
     return false;
 }
+#pragma clang diagnostic pop
 
 time_t fsys::last_write_time(const std::string& path, fsys_error& err)
 {
@@ -59,7 +62,7 @@ fsys::status_t fsys::status(const std::string& path, fsys_error& err)
         info.access = ino.st_atime;
         info.modify = ino.st_mtime;
         info.change = ino.st_ctime;
-        info.size = ino.st_size;
+        info.size = static_cast<uintmax_t>(ino.st_size);
         switch(S_IFMT & ino.st_mode) {
         case S_IFCHR:
             info.type = file_type::character;
@@ -243,7 +246,7 @@ bool fsys::remove_dsc(const std::string& source, fsys_error& err)
             continue;
         }
 		auto file = split(buffer).back();
-		if(!remove(prefix + "/" + file, err))
+		if(!remove(prefix + "/" + file, err)) // NOLINT
 			return false;
     }
 	return remove(source, err);
@@ -270,7 +273,7 @@ bool fsys::copy_dsc(const std::string& source, const std::string& target, fsys_e
             continue;
         }
 		auto file = split(buffer).back();
-		if(!copy_file(prefix + "/" + file, target + "/" + file, err))
+		if(!copy_file(prefix + "/" + file, target + "/" + file, err)) // NOLINT
 			return false;
     }
 	return copy_file(source, target + "/" + basename, err);

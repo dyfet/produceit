@@ -42,26 +42,6 @@
 
 #include "config.hpp"
 
-template<typename T, typename S>
-inline T polydynamic_cast(S *s) {
-        return dynamic_cast<T>(s);
-}
-
-template<typename T, typename S>
-inline T polyconst_cast(S *s) {
-        return const_cast<T>(polydynamic_cast<T>(s));
-}
-
-template<typename T, typename S>
-inline T polystatic_cast(S *s) {
-        return static_cast<T>(s);
-}
-
-template<typename T, typename S>
-inline T& polyreference_cast(S *s) {
-        return *(static_cast<T*>(s));
-}
-
 template<typename T>
 inline bool is(T& object) {
         return object.operator bool();

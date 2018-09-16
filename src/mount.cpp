@@ -40,10 +40,13 @@ using namespace std;
 
 bool fsys::mountpoint::verbose = false;
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCDFAInspection"
 fsys::mountpoint::mountpoint(const std::string& where)
 {
     path = where;
 }
+#pragma clang diagnostic pop
 
 fsys::mountpoint::~mountpoint()
 {

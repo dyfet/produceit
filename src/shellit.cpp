@@ -37,6 +37,8 @@ args::flag verbose('v', "--verbose", "display operations");
 args::flag xserver('X', nullptr, "X server support");
 keyfile etc_config;
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCDFAInspection"
 void cpu(std::string id) {
     if (id[0] == 'i' && id[2] == '8' && id[3] == '6')
         id = "i386";
@@ -51,6 +53,7 @@ void cpu(std::string id) {
     else
         ::setenv("ARCH", (*arch).c_str(), 1);
 }
+#pragma clang diagnostic pop
 } // end anon namespace
 
 int main(int argc, const char **argv)
@@ -141,12 +144,12 @@ int main(int argc, const char **argv)
         else
             cpu(uts.machine);
 
-        int nobody = 65535;
-        struct group *grp = getgrnam("produceit");
+        gid_t nobody = 65535;
+        auto grp = getgrnam("produceit");
 		if(!grp)
 			throw runtime_error("produceit group entry missing");
 
-        struct passwd *pwd = getpwnam("nobody");
+        auto pwd = getpwnam("nobody");
         if(pwd)
             nobody = pwd->pw_uid;
 
@@ -259,7 +262,7 @@ int main(int argc, const char **argv)
         for(const auto& path : files) {
             if(is(verbose))
                 output() << "copy " << path;
-            if(!fsys::copy_file(path, distrofs + "/" + path))
+            if(!fsys::copy_file(path, distrofs + "/" + path)) // NOLINT
                 throw bad_path(path);
         }
 
@@ -331,8 +334,8 @@ int main(int argc, const char **argv)
         fsys::mount proc_mount;
         proc_mount.proc("/proc");
 
-        setgid((gid_t)exec_gid);
-        setuid((uid_t)exec_uid);
+        setgid((gid_t)exec_gid); // NOLINT
+        setuid((uid_t)exec_uid); // NOLINT
 
 #ifdef  HAVE_PERSONALITY
         if(exec_pmode)

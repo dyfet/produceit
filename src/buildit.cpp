@@ -258,12 +258,12 @@ int main(int argc, const char **argv)
         else
             cpu(uts.machine);
 
-	    int nobody = 65535;
-        struct group *grp = getgrnam("produceit");
+	    gid_t nobody = 65535;
+        auto grp = getgrnam("produceit");
         if(!grp)
             throw runtime_error("produceit group entry missing");
 
-        struct passwd *pwd = getpwnam("nobody");
+        auto pwd = getpwnam("nobody");
         if(pwd)
             nobody = pwd->pw_uid;
 
@@ -329,7 +329,7 @@ int main(int argc, const char **argv)
         for(const auto& path : files) {
             if(is(verbose))
                 output() << "copy " << path;
-            if(!fsys::copy_file(path, distrofs + "/" + path))
+            if(!fsys::copy_file(path, distrofs + "/" + path)) // NOLINT
                 throw bad_path(path);
         }
 
@@ -366,10 +366,10 @@ int main(int argc, const char **argv)
         fsys::mount tmp_mount(*session + "/var/tmp", fsys::file_perms::temporary);
 
 		// more setup
-		setuid(0);
-		setgid(nobody);
-        setegid(nobody);
-	    seteuid(0);
+		setuid(0); // NOLINT
+		setgid(nobody); // NOLINT
+        setegid(nobody); // NOLINT
+	    seteuid(0); // NOLINT
         endpwent();
         endgrent();
 
@@ -434,8 +434,6 @@ int main(int argc, const char **argv)
 #endif
         
         auto envp = create_env(etc_config["env"]);
-        int exit_code = 0;
-
         try {
             output() << "update tasks " << update_tasks.size();
             for(auto args : update_tasks) {
