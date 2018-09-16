@@ -6,7 +6,8 @@ Debug/
 Release/
 doc/
 
-.idea/
+.idea/*
+!.idea/inspectionProfiles
 build/
 .vscode/*
 !.vscode/settings.json
