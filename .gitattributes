@@ -3,4 +3,7 @@
 .idea/ export-ignore
 .vscode/ export-ignore
 
+debian/ export-ignore
+redhat/ export-ignore
+
 *           text=auto
