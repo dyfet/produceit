@@ -21,7 +21,6 @@ _*
 *.workspace
 *.ninja
 *.user
-*.json
 cmake_*.cmake
 ALL_BUILD_*
 Makefile
