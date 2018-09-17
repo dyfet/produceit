@@ -15,19 +15,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef	__DIR_HPP__
-#define	__DIR_HPP__
+#ifndef	DIR_HPP
+#define	DIR_HPP
 
 #include "fsys.hpp"
 
 class dir
 {
 public:
-	using perms_t = fsys::perms_t;
-	using file_perms = fsys::file_perms;
+    using perms_t = fsys::perms_t;
+    using file_perms = fsys::file_perms;
 
-	dir(const dir&) = delete;
-	dir& operator=(const dir&) = delete;
+    dir(const dir&) = delete;
+    dir& operator=(const dir&) = delete;
 
     dir(const std::string& path) noexcept;
 

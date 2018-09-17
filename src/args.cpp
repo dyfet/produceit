@@ -84,7 +84,7 @@ args::Option(0, nullptr, nullptr, help)
 {
 }
 
-args::string::string(char shortopt, const char *longopt, const char *helpopt, const char *type, const std::string value) noexcept :
+args::string::string(char shortopt, const char *longopt, const char *helpopt, const char *type, const std::string& value) noexcept :
 args::Option(shortopt, longopt, type, helpopt)
 {
 	text = value;
@@ -127,10 +127,12 @@ size_t args::list::size()
 
 void args::group::assign(const char *value) 
 {
+    UNUSED(value);
 }
 
 void args::flag::assign(const char *value) 
 {
+    UNUSED(value);
 	if(single && used_count)
 		fail("option already used");
 
@@ -164,7 +166,7 @@ void args::charcode::assign(const char *value)
 	if(!endptr || *endptr != 0 || number < 0 || number > 255)
 		fail("invalid character value");
 
-	code = (char)number;
+    code = static_cast<char>(number);
 }
 
 void args::number::assign(const char *value)
@@ -223,9 +225,13 @@ args::args(const char **list, mode_t mode)
 				if(value)
 					throw bad_arg("numeric value already set", arg);
 
-				value = atol(arg);
+                char *endptr = nullptr;
+                value = strtol(arg, &endptr, 0);
+                if(!endptr || *endptr != 0)
+                    throw bad_arg("non-numeric value set", arg);
 				skip = true;
 			}
+            break;
 		default:
 			break;
 		}
@@ -237,9 +243,13 @@ args::args(const char **list, mode_t mode)
 				if(value)
 					throw bad_arg("numeric value already set", arg);
 
-				value = atol(++arg);
+                char *endptr = nullptr;
+                value = strtol(++arg, &endptr, 0);
+                if(!endptr || *endptr != 0)
+                    throw bad_arg("non-numeric value set", arg);
 				skip = true;
 			}
+            break;
 		default:
 			break;
 		}
@@ -421,7 +431,7 @@ bad_arg::bad_arg(const char *reason, const char *value) noexcept
 	msg += reason;
 }
 
-bad_arg::bad_arg(const char *reason, const char code) noexcept
+bad_arg::bad_arg(const char *reason, char code) noexcept
 {
 	msg += "-";
 	msg += code;

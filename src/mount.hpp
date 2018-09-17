@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef	__MOUNT_HPP__
-#define __MOUNT_HPP__
+#ifndef MOUNT_HPP
+#define MOUNT_HPP
 
 #include "compiler.hpp"
 #include "dir.hpp"
@@ -91,7 +91,7 @@ namespace fsys {
 	class mount : public mountpoint
 	{
 	public:
-		mount();
+        mount() = default;
 		mount(const std::string& where, perms_t mode = file_perms::owner_all);
 		mount(const std::string& from, const std::string& where, perms_t mode = file_perms::owner_all | file_perms::group_all);
 

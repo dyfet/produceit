@@ -50,15 +50,15 @@ fsys::status_t fsys::status(const std::string& path, fsys_error& err)
     struct stat ino{};
     file_status info{};
 
-    memset(&info, sizeof(info), 0);
-    memset(&info, sizeof(ino), 0);
+    memset(&info, 0, sizeof(info));
+    memset(&info, 0, sizeof(ino));
 
     info.type = file_type::none;
     info.perms = file_perms::no_perms;
 	info.access = info.modify = info.change = 0;
 
     if(!stat(path.c_str(), &ino)) {
-        info.perms = (file_perms)((ino.st_mode) & 07777);
+        info.perms = static_cast<file_perms>((ino.st_mode) & 07777);
         info.access = ino.st_atime;
         info.modify = ino.st_mtime;
         info.change = ino.st_ctime;
@@ -112,16 +112,16 @@ const std::string fsys::current_path(fsys_error& err)
 
 bool fsys::permissions(const std::string& path, perms_t value, fsys_error& err)
 {
-    if(chmod(path.c_str(), (mode_t)value)) {
+    if(chmod(path.c_str(), static_cast<mode_t>(value))) {
 		err = fsys::error();
 		return false;
 	}
     return true;
 }
 
-bool fsys::owner(const std::string& path, int uid, int gid, fsys_error& err)
+bool fsys::owner(const std::string& path, uid_t uid, gid_t gid, fsys_error& err)
 {
-	if(chown(path.c_str(), (uid_t)uid, (gid_t)gid)) {
+    if(chown(path.c_str(), uid, gid)) {
 		err = fsys::error();
 		return false;
 	}
@@ -191,7 +191,7 @@ std::string fsys::basename(const std::string& path, const std::string& ext)
 
 bool fsys::create_directory(const std::string& path, perms_t mode, fsys_error& err) 
 {
-    if(::mkdir(path.c_str(), (mode_t)mode)) {
+    if(::mkdir(path.c_str(), static_cast<mode_t>(mode))) {
 		err =  fsys::error();
 		return false;
 	}

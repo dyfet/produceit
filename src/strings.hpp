@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __STRINGS_HPP__
-#define __STRINGS_HPP__
+#ifndef STRINGS_HPP
+#define STRINGS_HPP
 
 #include "compiler.hpp"
 
@@ -27,12 +27,12 @@
 
 template<typename S = std::string, typename B = std::string>
 inline bool begins_with(const S s, const B b) {
-	return s.find(b) == 0;
+    return s.find(b) == 0;
 }
 
 template<typename S = std::string, typename E = std::string>
 inline bool ends_with(const S s, const E e) {
-	std::string::size_type position = s.rfind(e);
+    std::string::size_type position = s.rfind(e);
     if (position == std::string::npos)
         return false;
     else

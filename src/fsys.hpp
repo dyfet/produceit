@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef	__FSYS_HPP__
-#define	__FSYS_HPP__
+#ifndef	FSYS_HPP
+#define	FSYS_HPP
 
 #include "compiler.hpp"
 #include <cerrno>
@@ -183,7 +183,7 @@ namespace fsys {
     std::string dirname(const std::string& path);
     bool equal(const std::string& l, const std::string& r);
     bool permissions(const std::string& path, perms_t mode, fsys_error& err = lasterr);
-    bool owner(const std::string& path, int uid = getuid(), int gid = getgid(), fsys_error& err = lasterr);
+    bool owner(const std::string& path, uid_t uid = getuid(), gid_t gid = getgid(), fsys_error& err = lasterr);
     bool exists(const std::string& path);
     time_t last_write_time(const std::string& path, fsys_error& err = lasterr);
     status_t status(const std::string& path, fsys_error& err = lasterr);

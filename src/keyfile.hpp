@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef	__KEYFILE_HPP__
-#define	__KEYFILE_HPP__
+#ifndef	KEYFILE_HPP
+#define	KEYFILE_HPP
 
 #include "strings.hpp"
 #include <map>

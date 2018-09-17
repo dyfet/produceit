@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef __OUTPUT_HPP__
-#define __OUTPUT_HPP__
+#ifndef OUTPUT_HPP
+#define OUTPUT_HPP
 
 #include <sstream>
 
@@ -26,8 +26,7 @@ public:
 	output& operator=(const output&) = delete;
 	output(const output&) = delete;
 
-	output() : std::stringstream() {};
-
+    output() = default;
 	~output() override;
 };
 
@@ -37,8 +36,7 @@ public:
 	debug& operator=(const debug&) = delete;
 	debug(const debug&) = delete;
 
-	debug() : std::stringstream() {};
-
+    debug() = default;
 	~debug() override;
 };
 
@@ -48,8 +46,7 @@ public:
 	error& operator=(const error&) = delete;
 	error(const error&) = delete;
 
-	error() : std::stringstream() {};
-
+    error() = default;
 	~error() override;
 };
 
@@ -59,8 +56,7 @@ public:
 	crit& operator=(const crit&) = delete;
 	crit(const crit&) = delete;
 
-	crit(int code) : std::stringstream(), excode(code) {};
-
+    crit(int code) : excode(code) {}
 	~crit() override;
 
 private:

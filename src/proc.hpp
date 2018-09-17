@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef	__PROC_HPP__
-#define __PROC_HPP__
+#ifndef	PROC_HPP
+#define PROC_HPP
 
 #include <csignal>
 #include <map>

@@ -84,13 +84,7 @@ fsys::tmpdir::~tmpdir()
     }
 }
 
-fsys::mount::mount() :
-mountpoint()
-{
-}
-
-fsys::mount::mount(const std::string& where, perms_t mode) :
-mountpoint()
+fsys::mount::mount(const std::string& where, perms_t mode)
 {
     if(mode == file_perms::temporary) {
         temp(where, mode);
@@ -98,8 +92,7 @@ mountpoint()
     }
 }
 
-fsys::mount::mount(const std::string& from, const std::string& where, perms_t mode) :
-mountpoint()
+fsys::mount::mount(const std::string& from, const std::string& where, perms_t mode)
 {
     bind(from, where, mode);
 }

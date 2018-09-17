@@ -58,53 +58,54 @@ void cpu(std::string id) {
 
 int main(int argc, const char **argv)
 {
-	int exit_code = 0;
-	std::string reason;
+    int exit_code = 0;
+    std::string reason;
 
     ::signal(SIGINT, SIG_IGN); // NOLINT
     ::signal(SIGTERM, SIG_IGN); // NOLINT
 
-	try {
+    try {
         std::string cwd, distro, qemu_static;
         const char **exec_paths = nullptr;
-        int exec_gid, exec_uid;
+        gid_t exec_gid;
+        uid_t exec_uid;
         auto exec_mask = umask(002);
 #ifdef  HAVE_PERSONALITY
         unsigned long exec_pmode = 0;
 #endif
 
-		if(geteuid())
-			throw runtime_error("requires sudo or setuid binary");
+        if(geteuid())
+            throw runtime_error("requires sudo or setuid binary");
 
         fsys_error err;
         cwd = fsys::current_path(err);
-		if(is(err))
-			throw runtime_error("cannot access current directory");
+        if(is(err))
+            throw runtime_error("cannot access current directory");
 
-		args cli(argv);
-		if(is(helpflag) || is(althelp) || argc < 1) {
-			output() << "Usage: shellit [options] [command [..args]]";
-			output() << "Execute in chroot environment.";
-			output() << "\nOptions:";
-			args::help();
-			output() << "Report bugs to tychosoft@gmail.com";
-			::exit(0);
-		}
+        args cli(argv);
+        if(is(helpflag) || is(althelp) || argc < 1) {
+            output() << "Usage: shellit [options] [command [..args]]";
+            output() << "Execute in chroot environment.";
+            output() << "\nOptions:";
+            args::help();
+            output() << "Report bugs to tychosoft@gmail.com";
+            ::exit(0);
+        }
 
-		exec_paths = cli.paths();
+        exec_paths = cli.paths();
         exec_uid = getuid();
-		exec_gid = getgid();
+        exec_gid = getgid();
 
-		if(!exec_paths[0])
-			throw runtime_error("no distro specified");
-		distro = *(exec_paths++);
+        if(!exec_paths[0])
+            throw runtime_error("no distro specified");
+        distro = *(exec_paths++);
 
-		etc_config["system"] = {
-			{"rootfs",	VAR_PREFIX "/lib/produceit/rootfs"},
-			{"homefs",	VAR_PREFIX "/lib/produceit/homes"},
-			{"archive",	VAR_PREFIX "/lib/produceit/archive"},
-			{"prefix", "/tmp/.produceit"},
-		};
+        etc_config["system"] = {
+            {"rootfs",  VAR_PREFIX "/lib/produceit/rootfs"},
+            {"homefs",  VAR_PREFIX "/lib/produceit/homes"},
+            {"archive", VAR_PREFIX "/lib/produceit/archive"},
+            {"prefix", "/tmp/.produceit"},
+        };
 
         etc_config["env"] = {
             {"PATH", "/bin:/usr/bin:/bin/usr/local/bin"},
@@ -115,24 +116,24 @@ int main(int argc, const char **argv)
 
         etc_config["shell"][distro] = "/bin/bash";
 
-		if(!etc_config.load(ETC_PREFIX "/produceit.conf"))
-			etc_config.load("/etc/produceit.conf");
+        if(!etc_config.load(ETC_PREFIX "/produceit.conf"))
+            etc_config.load("/etc/produceit.conf");
 
         if(!exec_uid)
             etc_config["env"]["PATH"] = "/sbin:/usr/sbin:/usr/local/sbin:" + etc_config["env"]["PATH"];
 
-		auto rootfs = etc_config["system"]["rootfs"];
-		auto homefs = etc_config["system"]["homefs"];
+        auto rootfs = etc_config["system"]["rootfs"];
+        auto homefs = etc_config["system"]["homefs"];
 
-		if(!exec_uid && *exec_paths)
-			throw runtime_error("root access only for login");
+        if(!exec_uid && *exec_paths)
+            throw runtime_error("root access only for login");
 
         struct utsname uts{};
         uname(&uts);
-		if(is(arch)) {
+        if(is(arch)) {
             if(etc_config["qemu"][*arch].length() > 0)
                 qemu_static = "/usr/bin/qemu-" + etc_config["qemu"][*arch] + "-static";
-			cpu(*arch);
+            cpu(*arch);
 #ifdef HAVE_PERSONALITY
             auto arch_type = etc_config["personality"][*arch];
             if(arch_type == "32")
@@ -146,37 +147,37 @@ int main(int argc, const char **argv)
 
         gid_t nobody = 65535;
         auto grp = getgrnam("produceit");
-		if(!grp)
-			throw runtime_error("produceit group entry missing");
+        if(!grp)
+            throw runtime_error("produceit group entry missing");
 
         auto pwd = getpwnam("nobody");
         if(pwd)
             nobody = pwd->pw_uid;
 
-		pwd = getpwuid((uid_t)exec_uid);
-		
-		if(exec_uid) {
-			if(!pwd)
-				throw runtime_error("running as unknown user");
+        pwd = getpwuid(exec_uid);
+        
+        if(exec_uid) {
+            if(!pwd)
+                throw runtime_error("running as unknown user");
 
             if(exec_paths[0])
-    			exec_gid = pwd->pw_gid;
+                exec_gid = pwd->pw_gid;
             else
                 exec_gid = grp->gr_gid;
 
-			unsigned pos = 0;
-			bool found = false;
+            unsigned pos = 0;
+            bool found = false;
             const char *member;
-			while((member = grp->gr_mem[pos++]) != nullptr) {
-				if(eq(member, pwd->pw_name)) {
-					found = true;
-					break;
-				}
-			}	
-			
-			if(!found)
-				throw runtime_error(std::string(pwd->pw_name) + ": not member of produceit");
-		}	
+            while((member = grp->gr_mem[pos++]) != nullptr) {
+                if(eq(member, pwd->pw_name)) {
+                    found = true;
+                    break;
+                }
+            }   
+            
+            if(!found)
+                throw runtime_error(std::string(pwd->pw_name) + ": not member of produceit");
+        }   
 
         auto distrofs = rootfs + "/" + distro + "_" + *arch;
         if(!fsys::exists(distrofs))
@@ -196,7 +197,7 @@ int main(int argc, const char **argv)
         if(!fsys::exists(rootuser))
             fsys::create_directory(rootuser, fsys::file_perms::owner_all);
 
-		auto archive = etc_config["system"]["archive"];
+        auto archive = etc_config["system"]["archive"];
         auto binary = archive + "/" + distro;
 
         if(!fsys::exists(binary)) {
@@ -235,7 +236,7 @@ int main(int argc, const char **argv)
         // create session...
         fsys::tmpdir prefix(etc_config["system"]["prefix"]);
         fsys::tmpdir session(*prefix + "/" + std::to_string(getpid()));
-		fsys::mount::trace(is(verbose));
+        fsys::mount::trace(is(verbose));
 
         if(is(verbose)) {
             output() << "creating " << *session;
@@ -334,8 +335,8 @@ int main(int argc, const char **argv)
         fsys::mount proc_mount;
         proc_mount.proc("/proc");
 
-        setgid((gid_t)exec_gid); // NOLINT
-        setuid((uid_t)exec_uid); // NOLINT
+        setgid(exec_gid); // NOLINT
+        setuid(exec_uid); // NOLINT
 
 #ifdef  HAVE_PERSONALITY
         if(exec_pmode)
@@ -368,33 +369,33 @@ int main(int argc, const char **argv)
             ::execvp(exec_paths[0], (char *const*)exec_paths); // NOLINT
         }
         ::exit(-1);
-	}
+    }
     catch(const bad_path& e) {
         reason = e.what();
         exit_code = 4;
     }
-	catch(const bad_mount& e) {
-		reason = e.what();
-		exit_code = 4;
-	}
-	catch(const bad_arg& e) {
-		reason = e.what();
-		exit_code = 3;
-	}
-	catch(const runtime_error& e) {
-		reason = e.what();
-		exit_code = 2;
-	}
-	catch(const exception& e) {
-		reason = e.what();
-		exit_code = 1;
-	}
+    catch(const bad_mount& e) {
+        reason = e.what();
+        exit_code = 4;
+    }
+    catch(const bad_arg& e) {
+        reason = e.what();
+        exit_code = 3;
+    }
+    catch(const runtime_error& e) {
+        reason = e.what();
+        exit_code = 2;
+    }
+    catch(const exception& e) {
+        reason = e.what();
+        exit_code = 1;
+    }
     catch(int exiting) {
         ::exit(exiting);
     }
 
-	if(exit_code > 0)
-		error() << "*** shellit: " << reason;
+    if(exit_code > 0)
+        error() << "*** shellit: " << reason;
 
-	return exit_code;
-}	
+    return exit_code;
+}   

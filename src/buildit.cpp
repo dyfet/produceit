@@ -145,7 +145,7 @@ void debian(const std::string &pkg) {
         dir results("..");
         std::string entry;
         bool changes = false;
-        while ((entry = results.get()) != std::string()) {
+        while (!(entry = results.get()).empty()) {
             if (entry.substr(entry.find_last_of('.') + 1) == "changes") {
                 changes = true;
                 if (!fsys::copy_dsc("../" + entry, "/var/results")) {
@@ -173,20 +173,20 @@ void task(const char *argv[], const char *envp[]) {
         return;
 
     fsys::current_path("/tmp/buildd");
-    execve(argv[0], (char *const *) argv, (char *const *) envp); // NOLINT
+    execve(argv[0],(char *const *)argv, (char *const *) envp); // NOLINT
     ::exit(-1);
 }
 } // anonymous namespace
 
 int main(int argc, const char **argv)
 {
-	int exit_code = 0;
-	std::string reason;
+    int exit_code = 0;
+    std::string reason;
 
     ::signal(SIGINT, SIG_IGN); // NOLINT
     ::signal(SIGTERM, SIG_IGN); // NOLINT
 
-	try {
+    try {
         std::string distro, qemu_static;
         std::list<const char **> update_tasks;
         const char **pkg_paths = nullptr;
@@ -195,32 +195,32 @@ int main(int argc, const char **argv)
 #endif
         umask(002);
 
-		if(geteuid())
-			throw runtime_error("requires sudo or setuid binary");
+        if(geteuid())
+            throw runtime_error("requires sudo or setuid binary");
 
-		args cli(argv);
-		if(is(helpflag) || is(althelp) || argc < 1) {
-			output() << "Usage: buildit [options] distro [pkgs..]";
-			output() << "Build package in chroot environment.";
-			output() << "\nOptions:";
-			args::help();
-			output() << "Report bugs to tychosoft@gmail.com";
-			::exit(0);
-		}
+        args cli(argv);
+        if(is(helpflag) || is(althelp) || argc < 1) {
+            output() << "Usage: buildit [options] distro [pkgs..]";
+            output() << "Build package in chroot environment.";
+            output() << "\nOptions:";
+            args::help();
+            output() << "Report bugs to tychosoft@gmail.com";
+            ::exit(0);
+        }
 
-		pkg_paths = cli.paths();
-		if(!pkg_paths[0])
-			throw runtime_error("no distro specified");
+        pkg_paths = cli.paths();
+        if(!pkg_paths[0])
+            throw runtime_error("no distro specified");
 
-		distro = *(pkg_paths++);
+        distro = *(pkg_paths++);
 
-		etc_config["system"] = {
-			{"rootfs",	VAR_PREFIX "/lib/produceit/rootfs"},
-			{"homes",	VAR_PREFIX "/lib/produceit/homes"},
+        etc_config["system"] = {
+            {"rootfs",  VAR_PREFIX "/lib/produceit/rootfs"},
+            {"homes",   VAR_PREFIX "/lib/produceit/homes"},
             {"source",  VAR_PREFIX "/lib/produceit/source"},
-			{"archive",	VAR_PREFIX "/lib/produceit/archive"},
-			{"prefix", "/tmp/.produceit"},
-		};
+            {"archive", VAR_PREFIX "/lib/produceit/archive"},
+            {"prefix", "/tmp/.produceit"},
+        };
 
         etc_config["env"] = {
             {"PATH", "/bin:/usr/bin:/bin/usr/local/bin"},
@@ -230,14 +230,14 @@ int main(int argc, const char **argv)
             {"DEBIAN_FRONTEND", "noninteractive"},
         };
 
-		etc_config["shell"][distro] = "/bin/bash";
-		etc_config["env"]["PATH"] = "/sbin:/usr/sbin:/usr/local/sbin:" + etc_config["env"]["PATH"];
+        etc_config["shell"][distro] = "/bin/bash";
+        etc_config["env"]["PATH"] = "/sbin:/usr/sbin:/usr/local/sbin:" + etc_config["env"]["PATH"];
 
-		if(!etc_config.load(ETC_PREFIX "/produceit.conf"))
-			etc_config.load("/etc/produceit.conf");
-		
-		auto rootfs = etc_config["system"]["rootfs"];
-		auto homefs = etc_config["system"]["homefs"] + "/root";
+        if(!etc_config.load(ETC_PREFIX "/produceit.conf"))
+            etc_config.load("/etc/produceit.conf");
+        
+        auto rootfs = etc_config["system"]["rootfs"];
+        auto homefs = etc_config["system"]["homefs"] + "/root";
         auto source = etc_config["system"]["source"];
 
         struct utsname uts{};
@@ -258,7 +258,7 @@ int main(int argc, const char **argv)
         else
             cpu(uts.machine);
 
-	    gid_t nobody = 65535;
+        gid_t nobody = 65535;
         auto grp = getgrnam("produceit");
         if(!grp)
             throw runtime_error("produceit group entry missing");
@@ -267,14 +267,14 @@ int main(int argc, const char **argv)
         if(pwd)
             nobody = pwd->pw_uid;
 
-		auto distrofs = rootfs + "/" + distro + "_" + *arch;
-		if(!fsys::exists(distrofs))
-			throw bad_path("rootfs/" + distro + "_" + *arch);
-		if(!fsys::exists(homefs))
-			fsys::create_directory(homefs, fsys::file_perms::owner_all);
+        auto distrofs = rootfs + "/" + distro + "_" + *arch;
+        if(!fsys::exists(distrofs))
+            throw bad_path("rootfs/" + distro + "_" + *arch);
+        if(!fsys::exists(homefs))
+            fsys::create_directory(homefs, fsys::file_perms::owner_all);
 
-		auto archive = etc_config["system"]["archive"];
-		auto binary = archive + "/" + distro;
+        auto archive = etc_config["system"]["archive"];
+        auto binary = archive + "/" + distro;
 
         if(!fsys::exists(binary)) {
             fsys::create_directory(archive, fsys::file_perms::owner_all | fsys::file_perms::group_read | fsys::file_perms::group_exe | fsys::file_perms::others_read | fsys::file_perms::others_exe);
@@ -291,18 +291,18 @@ int main(int argc, const char **argv)
 
         // create environment, including for logins
 
-		etc_config["env"] = {
-			{"HOME", "/root"},
-			{"USER", "root"},
-			{"LOGNAME", "root"},
-			{"USERNAME", "root"},
-			{"UID", "0"},
-			{"CWD", "/tmp/buildd"},
-			{"SHELL", "/bin/sh"},
-			{"PRODUCEIT", std::to_string(getpid())},
-		};
+        etc_config["env"] = {
+            {"HOME", "/root"},
+            {"USER", "root"},
+            {"LOGNAME", "root"},
+            {"USERNAME", "root"},
+            {"UID", "0"},
+            {"CWD", "/tmp/buildd"},
+            {"SHELL", "/bin/sh"},
+            {"PRODUCEIT", std::to_string(getpid())},
+        };
 
-		// create session...
+        // create session...
         fsys::tmpdir prefix(etc_config["system"]["prefix"]);
         fsys::tmpdir session(*prefix + "/" + std::to_string(getpid()));
         fsys::tmpdir sources(*prefix + "/sources");
@@ -356,7 +356,7 @@ int main(int argc, const char **argv)
             pkg_paths[pkg_count++] = cp;
         }
 
-		// begin mounting
+        // begin mounting
         fsys::mount top_mount(distrofs, *session, fsys::file_perms::owner_all);
         fsys::mount top_owner(homefs, *session + "/root", fsys::file_perms::owner_all);
         fsys::mount dev_mount("/dev", *session + "/dev");
@@ -365,17 +365,17 @@ int main(int argc, const char **argv)
         fsys::mount shm_mount("/dev/shm", *session + "/dev/shm");
         fsys::mount tmp_mount(*session + "/var/tmp", fsys::file_perms::temporary);
 
-		// more setup
-		setuid(0); // NOLINT
-		setgid(nobody); // NOLINT
+        // more setup
+        setuid(0); // NOLINT
+        setgid(nobody); // NOLINT
         setegid(nobody); // NOLINT
-	    seteuid(0); // NOLINT
+        seteuid(0); // NOLINT
         endpwent();
         endgrent();
 
         fsys::mount source_mount(source, *session + "/var/origin");
         fsys::mount result_mount(fsys::current_path(), *session + "/var/results");
-		fsys::mount archive_mount(binary, *session + "/var/archive");
+        fsys::mount archive_mount(binary, *session + "/var/archive");
         if(fsys::exists(*session + "/etc/apt/sources.list.d")) {
             if(is(update)) {
                 update_tasks.push_back(apt_update);
@@ -458,8 +458,8 @@ int main(int argc, const char **argv)
             exit_code = status;
         }
         ::exit(exit_code);
-		
-	}
+        
+    }
     catch(const bad_pkg& e) {
         reason = e.what();
         exit_code = 4;
@@ -488,8 +488,8 @@ int main(int argc, const char **argv)
         ::exit(exiting);
     }
 
-	if(exit_code > 0)
-		error() << "*** buildit: " << reason;
+    if(exit_code > 0)
+        error() << "*** buildit: " << reason;
 
-	return exit_code;
+    return exit_code;
 }

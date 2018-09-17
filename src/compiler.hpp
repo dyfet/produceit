@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef	__COMPILER_HPP__
-#define __COMPILER_HPP__
+#ifndef	COMPILER_HPP
+#define COMPILER_HPP
 
 #ifdef __clang__
 #pragma clang diagnostic ignored "-Wpadded"
@@ -29,8 +29,8 @@
 #error C++11 compliant compiler required
 #endif
 
-#ifndef __UNUSED
-#define __UNUSED(x)                     (void)x
+#ifndef UNUSED
+#define UNUSED(x)                     (void)x
 #endif
 
 #include <iostream>
@@ -44,7 +44,7 @@
 
 template<typename T>
 inline bool is(T& object) {
-        return object.operator bool();
+    return object.operator bool();
 }
 
 /*!
