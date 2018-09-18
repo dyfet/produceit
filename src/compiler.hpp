@@ -27,7 +27,10 @@
 #pragma clang diagnostic ignored "-Wzero-as-null-pointer-constant"
 #endif
 
+#ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wunused-result"
+#pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
 
 #if __cplusplus <= 199711L
 #error C++11 compliant compiler required

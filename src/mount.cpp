@@ -101,7 +101,7 @@ void fsys::mount::proc(const std::string& where)
 {
     fsys::create_directory(where, fsys::file_perms::read_all);
 #ifdef  CLONE_NEWPID
-    int err = ::mount("proc", where.c_str(), "proc", MS_MGC_VAL, NULL);
+    int err = ::mount("proc", where.c_str(), "proc", MS_MGC_VAL, nullptr);
 #else
 #if defined(MS_BIND)
     int err = ::mount("none", where.c_str(), "proc", 0, NULL);

@@ -85,6 +85,8 @@ const char *dnf_clean[] = {
     nullptr,
 };
 
+#pragma clang diagnostic push
+#pragma ide diagnostic ignored "OCDFAInspection"
 void cpu(std::string id) {
     if (id[0] == 'i' && id[2] == '8' && id[3] == '6')
         id = "i386";
@@ -99,6 +101,7 @@ void cpu(std::string id) {
     else
         ::setenv("ARCH", (*arch).c_str(), 1);
 }
+#pragma clang diagnostic pop
 
 void debian(const std::string &pkg) {
     fsys::mount tmp_mount("/tmp", fsys::file_perms::temporary);
