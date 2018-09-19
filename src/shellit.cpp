@@ -37,8 +37,6 @@ args::flag verbose('v', "--verbose", "display operations");
 args::flag xserver('X', nullptr, "X server support");
 keyfile etc_config;
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCDFAInspection"
 void cpu(std::string id) {
     if (id[0] == 'i' && id[2] == '8' && id[3] == '6')
         id = "i386";
@@ -53,7 +51,6 @@ void cpu(std::string id) {
     else
         ::setenv("ARCH", (*arch).c_str(), 1);
 }
-#pragma clang diagnostic pop
 } // end anon namespace
 
 int main(int argc, const char **argv)

@@ -26,8 +26,6 @@ using namespace std;
 
 fsys_error fsys::lasterr = 0;
 
-#pragma clang diagnostic push
-#pragma ide diagnostic ignored "OCDFAInspection"
 bool fsys::is_hidden_file(const std::string& path)
 {
     std::string::size_type pos = path.find_last_of("/\\:");
@@ -37,7 +35,6 @@ bool fsys::is_hidden_file(const std::string& path)
         return true;
     return false;
 }
-#pragma clang diagnostic pop
 
 time_t fsys::last_write_time(const std::string& path, fsys_error& err)
 {
