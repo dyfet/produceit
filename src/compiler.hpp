@@ -30,6 +30,8 @@
 #ifdef __GNUC__
 #pragma GCC diagnostic ignored "-Wunused-result"
 #pragma GCC diagnostic ignored "-Wold-style-cast"
+#pragma GCC diagnostic ignored "-Wcast-qual"
+#pragma GCC diagnostic ignored "-Wzero-as-null-pointer-constant"
 #endif
 
 #if __cplusplus <= 199711L
