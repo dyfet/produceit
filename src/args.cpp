@@ -44,6 +44,7 @@ const std::string args::exec_name()
 
 args::Option::Option(char shortopt, const char *longopt, const char *value, const char *help) noexcept
 {
+    next = nullptr;
 	if(last) {
 		last->next = this;
 		last = this;
@@ -191,6 +192,7 @@ args::args(const char **list, mode_t mode)
 		abort();
 
 	instance = this;
+    value = 0;
 
 	bool skip;
 
