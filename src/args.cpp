@@ -184,7 +184,7 @@ void args::number::assign(const char *value)
 		fail("invalid value assigned");
 }
 
-args::args(const char **list, mode_t mode)
+args::args(const char **list, Mode mode)
 {
 	assert(list != nullptr);
 
@@ -221,8 +221,8 @@ args::args(const char **list, mode_t mode)
 			break;
 
 		switch(mode) {
-		case DASH:
-		case ALL:
+		case Mode::DASH:
+		case Mode::ALL:
 			if(arg[0] == '-' && arg[1] >= '0' && arg[1] <= '9') {
 				if(value)
 					throw bad_arg("numeric value already set", arg);
@@ -239,8 +239,8 @@ args::args(const char **list, mode_t mode)
 		}
 
 		switch(mode) {
-		case PLUS:
-		case ALL:
+		case Mode::PLUS:
+		case Mode::ALL:
 			if(arg[0] == '+' && arg[1] >= '0' && arg[1] <= '9') {
 				if(value)
 					throw bad_arg("numeric value already set", arg);

@@ -26,7 +26,7 @@
 class args final
 {
 public:
-    using mode_t = enum { NONE, PLUS, DASH, ALL };
+    enum class Mode { NONE, PLUS, DASH, ALL };
 
     class Option
     {
@@ -186,7 +186,7 @@ public:
     args(const args& from) = delete;
     args& operator=(const args& from) = delete;
 
-    args(const char **argv, mode_t mode = NONE);
+    args(const char **argv, Mode mode = Mode::NONE);
     
     inline const std::string operator[](unsigned index) const {
 	return argv[index];
