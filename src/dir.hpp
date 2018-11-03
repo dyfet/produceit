@@ -38,28 +38,28 @@ public:
     ~dir();
 
     inline explicit operator bool() const {
-	return state != nullptr;
+        return state != nullptr;
     }
 
     inline bool operator!() const {
-	return state == nullptr;
+        return state == nullptr;
     }
 
     inline bool operator==(const std::string& text) {
-	return fsys::equal(get(), text);
+        return fsys::equal(get(), text);
     }
 
     inline bool operator!=(const std::string& text) {
-	return !fsys::equal(get(), text);
+        return !fsys::equal(get(), text);
     }
 
     inline std::string operator*() {
-	return get();
+        return get();
     }
 
     inline dir& operator++() {
-	next();
-	return *this;
+        next();
+        return *this;
     }
 
     void open(const std::string& path);
@@ -71,7 +71,7 @@ public:
     void close();
 
     inline bool is_open() const {
-	return state != nullptr;
+        return state != nullptr;
     }
 
 protected:
