@@ -10,6 +10,8 @@ build:
     - make | tee make.log
   tags:
     - docker
+  except:
+    - master
   artifacts:
     expire_in: 2 weeks
     when: always
