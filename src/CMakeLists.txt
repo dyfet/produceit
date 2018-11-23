@@ -22,10 +22,25 @@ add_executable(shellit shellit.cpp)
 add_dependencies(shellit common)
 target_link_libraries(shellit common)
 
+if(LINUX)
+    add_executable(lxcuser lxcuser.cpp)
+    add_dependencies(lxcuser common)
+    target_link_libraries(lxcuser common pthread)
+endif()
+
 if(UNIX)
     set_target_properties(buildit PROPERTIES COMPILE_FLAGS "${CMAKE_COMPILE_SETUID_FLAGS}" LINK_FLAGS "${CMAKE_LINK_SETUID_FLAGS}" POSITION_INDEPENDENT_CODE TRUE )
     set_target_properties(shellit PROPERTIES COMPILE_FLAGS "${CMAKE_COMPILE_SETUID_FLAGS}" LINK_FLAGS "${CMAKE_LINK_SETUID_FLAGS}" POSITION_INDEPENDENT_CODE TRUE )
+    if(LINUX)
+        set_target_properties(lxcuser PROPERTIES COMPILE_FLAGS "${CMAKE_COMPILE_SETUID_FLAGS}" LINK_FLAGS "${CMAKE_LINK_SETUID_FLAGS}" POSITION_INDEPENDENT_CODE TRUE )
+    endif()
 endif()
 
 install(TARGETS buildit shellit DESTINATION ${CMAKE_INSTALL_BINDIR} PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE SETUID)
 
+install(FILES buildit.1 shellit.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
+
+if(LINUX)
+    install(TARGETS lxcuser DESTINATION ${CMAKE_INSTALL_BINDIR} PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE SETUID)
+    install(FILES lxcuser.1 DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
+endif()

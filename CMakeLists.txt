@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1.0)
-project(ProduceIt VERSION 0.1.1 LANGUAGES CXX)
+project(ProduceIt VERSION 0.2.0 LANGUAGES CXX)
 string(TOLOWER "${PROJECT_NAME}" PROJECT_ARCHIVE)
 set(PROJECT_RELEASE "1")
 
@@ -9,6 +9,10 @@ endif()
 
 if(CMAKE_GENERATOR MATCHES "Unix")
     set(CMAKE_MAINTAINER true)
+endif()
+
+if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+    set(LINUX true)
 endif()
 
 include(${CMAKE_CURRENT_SOURCE_DIR}/Custom.cmake OPTIONAL)
@@ -48,7 +52,7 @@ install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/deb-archive.rb DESTINATION ${CMAKE_IN
 install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/deb-remove.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME deb-remove )
 install(FILES ${CMAKE_SOURCE_DIR}/produceit.conf DESTINATION ${CMAKE_INSTALL_SYSCONFDIR})
 
-install(FILES ${bman1} ${uman1} DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
+install(FILES ${uman1} DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
 
 if(CMAKE_MAINTAINER)
     add_custom_target(dist
