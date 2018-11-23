@@ -127,6 +127,10 @@ public:
 	    return text;
 	}
 
+	inline const char *c_str() const {
+	    return text.c_str();
+	}
+
     private:
 	std::string text;
 

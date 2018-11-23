@@ -48,7 +48,7 @@ fsys::status_t fsys::status(const std::string& path, fsys_error& err)
     file_status info{};
 
     memset(&info, 0, sizeof(info));
-    memset(&info, 0, sizeof(ino));
+    memset(&ino, 0, sizeof(ino));
 
     info.type = file_type::none;
     info.perms = file_perms::no_perms;

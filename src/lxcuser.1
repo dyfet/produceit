@@ -1,0 +1,71 @@
+.\" lxcuser - start lxc and login as a user
+.\" Copyright (C) 2017-2018 Tycho Softworks
+.\"
+.\" This manual page is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 3 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc.,59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+.\"
+.\" This manual page is written especially for Debian GNU/Linux.
+.\"
+.TH lxcuser "1" "November 2018" "ProduceIt" "Tycho Softworks"
+.SH NAME
+lxcuser \- start lxc and login as a user
+.SH SYNOPSIS
+.B lxcuser
+.RI [ options ]
+.br
+.SH DESCRIPTION
+lxcuser is used to initiate a lxc container if it is not already running,
+and then login as a user in that container.  By default, the user must have
+the same userid as the external user launching lxcuser, and hence you will
+need a login account inside the container.
+
+If lxcuser has already been started by another lxcuser instance, it keeps a
+count of active lxcuser sessions.  When the last lxcuser instance exits, the
+lxc container is automatically shut down as well.
+
+This makes it easy to use an lxc container for development where you need to
+develop and test on a different version of gnu/linux than the os that is
+hosting lxc.  You can even use ssh with -t to run a lxcuser session from a
+remote host.
+
+The underlying mechanism used is lxc-attach and /bin/su.  To prevent abuse,
+the user running lxcuser must be in the produceit group.  In addition, if
+you use the -u option to change user login id (such as to "root"), you also
+have to be in sudo or wheel on the lxc host side.
+.SH OPTIONS
+.TP
+.B \-\-name
+Specify name of lxc instance to use, per /var/lib/lxc/xxx.  The given lxc
+container will be started if it is idle, and stopped when the last lxcuser
+session using it exits.
+.TP
+.B \-\-preserve
+Preserve the current environment when logging into the lxc container.  By
+default the user logs in with a fresh login environment.
+.TP
+.B \-\-user
+Specify alternate user to login to in the container.  The default is the
+same userid as you have on the lxc host.
+.SH AUTHOR
+.B lxcuser
+was written by David Sugar <tychosoft@gmail.com>.
+.SH "REPORTING BUGS"
+Report bugs to tychosoft@gmail.com.
+.SH COPYRIGHT
+Copyright \(co 2017-2018 Tycho Softworks.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.
+
