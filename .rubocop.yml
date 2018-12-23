@@ -1,0 +1,52 @@
+# require class variable, singleton with global access methods
+Style/ClassVars:
+    Exclude:
+        - webkit/webkit.rb
+
+# prefer longer lines
+Metrics/LineLength:
+    Max: 240
+
+# prefer deeper nesting
+Metrics/BlockNesting:
+    Max: 5
+
+# prefer longer blocks
+Metrics/BlockLength:
+    Max: 50
+
+# prefer word lists direct 
+Style/WordArray:
+    Enabled: false
+
+# not documenting classes for now
+Style/Documentation:
+    Enabled: false
+
+# false triggers for things that are not lambda members
+Style/SymbolProc:
+    Enabled: false
+
+# i use case equality specifically for case neutral compares
+Style/CaseEquality:
+    Enabled: false
+
+# for now ignore
+Style/FlipFlop:
+    Enabled: false
+
+# makes it easy to add to lists
+Style/TrailingCommaInArrayLiteral:
+    Enabled: false
+
+# prefer compact spacing
+Layout/SpaceAroundOperators:
+    Enabled: false
+
+# prefer compact spacing
+Layout/SpaceInsideHashLiteralBraces:
+    Enabled: false
+
+# prefer compact spacing
+Layout/SpaceInsideBlockBraces:
+    Enabled: false

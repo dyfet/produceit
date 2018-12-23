@@ -23,41 +23,41 @@
 class output final : public std::stringstream
 {
 public:
-	output& operator=(const output&) = delete;
-	output(const output&) = delete;
+    output& operator=(const output&) = delete;
+    output(const output&) = delete;
 
     output() = default;
-	~output() override;
+    ~output() override;
 };
 
 class debug final : public std::stringstream
 {
 public:
-	debug& operator=(const debug&) = delete;
-	debug(const debug&) = delete;
+    debug& operator=(const debug&) = delete;
+    debug(const debug&) = delete;
 
     debug() = default;
-	~debug() override;
+    ~debug() override;
 };
 
 class error final : public std::stringstream
 {
 public:
-	error& operator=(const error&) = delete;
-	error(const error&) = delete;
+    error& operator=(const error&) = delete;
+    error(const error&) = delete;
 
     error() = default;
-	~error() override;
+    ~error() override;
 };
 
 class crit final : public std::stringstream
 {
 public:
-	crit& operator=(const crit&) = delete;
-	crit(const crit&) = delete;
+    crit& operator=(const crit&) = delete;
+    crit(const crit&) = delete;
 
-    crit(int code) : excode(code) {}
-	~crit() override;
+    explicit crit(int code) : excode(code) {}
+    ~crit() override;
 
 private:
 	int excode;

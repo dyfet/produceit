@@ -7,7 +7,7 @@
 
 ['optparse', 'fileutils'].each {|mod| require mod}
 
-EXTS = ['.dsc', '.deb', '.changes']
+EXTS = ['.dsc', '.deb', '.changes'].freeze
 
 banner = 'Usage: deb-remove [options] debian-files...'
 verbose = false
@@ -26,25 +26,27 @@ OptionParser.new do |opts|
   end
 end.parse!
 
-abort(banner) if ARGV.size < 1
+abort(banner) if ARGV.empty?
 
 # process file list
-ARGV.each() do |file; ext, basename, origin|
+ARGV.each do |file; ext, basename, origin|
   ext = File.extname(file)
   basename = File.basename(file)
 
   abort("*** deb-remove: #{basename}: not debian source control") unless EXTS.include?(ext)
   exit unless File.file?(file)
-    
+
   origin = File.dirname(file)
-  print "Removing... #{basename}...\n" if verbose === true
+  print "Removing... #{basename}...\n" if verbose == true
   File.open(file, 'r') do |dsc; line, entry|
-    while(line = dsc.gets)
+    while (line = dsc.gets)
       next unless line=~/^Files/...line=~/^$/
-      next if line =~/^$/ || line.strip! =~ /^Files/
+      next if line =~ /^$/ || line.strip! =~ /^Files/
+
       entry = line.split(' ')[-1].prepend(origin + '/')
       next unless File.file?(entry)
-      print "Removing #{File.basename(entry)}...\n" if verbose === true
+
+      print "Removing #{File.basename(entry)}...\n" if verbose == true
       FileUtils.remove_file(entry)
     end
   end unless ext === '.deb'

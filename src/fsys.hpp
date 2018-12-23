@@ -55,7 +55,11 @@ public:
         return errcode;
     }
 
-    inline operator bool() const noexcept {
+    explicit inline operator int() const noexcept {
+        return errcode;
+    }
+
+    explicit inline operator bool() const noexcept {
         return errcode > 0;
     }
 
@@ -267,7 +271,7 @@ namespace fsys {
 class bad_pkg final : public std::exception
 {
 public:
-	bad_pkg(const std::string& path);
+    explicit bad_pkg(const std::string& path);
 
 	const std::string path() const {
 		return msg_path;
@@ -283,7 +287,7 @@ private:
 class bad_path final : public std::exception
 {
 public:
-	bad_path(const std::string& path);
+    explicit bad_path(const std::string& path);
 
 	const std::string path() const {
 		return msg_path;

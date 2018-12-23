@@ -50,14 +50,14 @@ namespace fsys {
 		mountpoint(const mountpoint&) = delete;
 		const mountpoint& operator=(const mountpoint&) = delete;
 
-		mountpoint(const std::string& where);
+        explicit mountpoint(const std::string& where);
 		~mountpoint();
 
 		bool operator!() const {
 			return path.length() == 0;
 		}
 
-		operator bool() const {
+        explicit operator bool() const {
 			return path.length() > 0;
 		}
 
@@ -69,8 +69,8 @@ namespace fsys {
 
 	protected:
 		inline mountpoint() = default;
-	
-		std::string path;
+        std::string path;
+
 		static bool verbose;
 	};
 
@@ -113,7 +113,7 @@ public:
 	const char *what() const noexcept override;
 
 protected:
-	bad_mount(const std::string& path);
+    explicit bad_mount(const std::string& path);
 
 private:
 	friend class fsys::mount;

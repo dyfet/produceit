@@ -29,7 +29,7 @@ public:
     dir(const dir&) = delete;
     dir& operator=(const dir&) = delete;
 
-    dir(const std::string& path) noexcept;
+    explicit dir(const std::string& path) noexcept;
 
     dir(dir&& from) noexcept;
 
@@ -76,8 +76,9 @@ public:
 
 protected:
     struct stateinfo;
-    struct stateinfo *state;
 
+private:
+    struct stateinfo *state;
     fsys_error err;
 };
 
