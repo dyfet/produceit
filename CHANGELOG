@@ -1,6 +1,7 @@
 v0.2.1
 * Code cleanup, particularly ruby scripting
 * Restructured top cmake for clarity and completeness
+* Start of unit testing for api and code coverage
 
 v0.2.0
 * Initial lxc utility; lxc-user.
