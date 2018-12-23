@@ -4,6 +4,7 @@ CMakeFiles/
 CMakeScripts/
 Debug/
 Release/
+Testing/
 doc/
 
 .idea/*
@@ -21,6 +22,7 @@ _*
 *.workspace
 *.ninja
 *.user
+*.gcov
 cmake_*.cmake
 ALL_BUILD_*
 Makefile
@@ -34,6 +36,7 @@ buildit
 shellit
 lxcuser
 core
+test_*
 
 *.ddeb
 *.buildinfo

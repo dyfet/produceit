@@ -7,6 +7,12 @@ if (POLICY CMP0063)
   cmake_policy(SET CMP0063 OLD)
 endif()
 
+if(CMAKE_COVERAGE_TYPE MATCHES "gcov")
+    set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+endif()
+
 if(CMAKE_GENERATOR MATCHES "Unix")
     set(CMAKE_MAINTAINER true)
 endif()
@@ -98,3 +104,19 @@ elseif(CMAKE_MAINTAINER)
     )
 endif()
 
+# testing and coverage
+
+if(CMAKE_COVERAGE_TYPE MATCHES "gcov")
+    set(BUILD_TESTING true)
+    add_custom_target(coverage
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        COMMAND rm -f *.gcov
+        COMMAND tests/test_output
+        COMMAND gcov -b src/*.cpp -o src/CMakeFiles/common.dir
+    )
+endif()
+
+if(BUILD_TESTING)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
