@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1.0)
-project(ProduceIt VERSION 0.2.0 LANGUAGES CXX)
+project(ProduceIt VERSION 0.2.1 LANGUAGES CXX)
 string(TOLOWER "${PROJECT_NAME}" PROJECT_ARCHIVE)
 set(PROJECT_RELEASE "1")
 
@@ -42,13 +42,15 @@ file(GLOB scripts utils/*.rb)
 file(GLOB bman1 src/*.1)
 file(GLOB uman1 utils/*.1)
 file(GLOB markdown *.md)
+file(GLOB issues .gitlab/issue_templates/*.md)
 
 add_subdirectory(src)
 
 # these give access to docs and support files when cmake is exported to an ide
 
-add_custom_target(support SOURCES produceit.conf ${scripts} config.hpp.in Doxyfile.in ${bman1} ${uman1})
-
+add_custom_target(manpages SOURCES ${bman1} ${uman1})
+add_custom_target(scripts SOURCES ${scripts})
+add_custom_target(support SOURCES produceit.conf config.hpp.in Doxyfile.in ${issues} .gitlab-ci.yml .rubocop.yml)
 add_custom_target(docs SOURCES LICENSE ${markdown}
     COMMAND doxygen Doxyfile
 )

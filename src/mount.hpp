@@ -43,83 +43,81 @@
 #include <grp.h>
 
 namespace fsys {
+class mountpoint
+{
+public:
+    mountpoint(const mountpoint&) = delete;
+    const mountpoint& operator=(const mountpoint&) = delete;
 
-	class mountpoint
-	{
-	public:
-		mountpoint(const mountpoint&) = delete;
-		const mountpoint& operator=(const mountpoint&) = delete;
+    explicit mountpoint(const std::string& where);
+    ~mountpoint();
 
-		mountpoint(const std::string& where);
-		~mountpoint();
+    bool operator!() const {
+        return path.length() == 0;
+    }
 
-		bool operator!() const {
-			return path.length() == 0;
-		}
+    explicit operator bool() const {
+        return path.length() > 0;
+    }
 
-		operator bool() const {
-			return path.length() > 0;
-		}
+    static void trace(bool flag) {
+        verbose = flag;
+    }
 
-		static void trace(bool flag) {
-			verbose = flag;
-		}
+    void release();
 
-		void release();
+protected:
+    inline mountpoint() = default;
+    std::string path;
 
-	protected:
-		inline mountpoint() = default;
-	
-		std::string path;
-		static bool verbose;
-	};
+    static bool verbose;
+};
 
-	class tmpdir final
-	{
-	public:
-		tmpdir(const std::string& where, perms_t mode = file_perms::owner_all);
-		~tmpdir();
+class tmpdir final
+{
+public:
+    tmpdir(const std::string& where, perms_t mode = file_perms::owner_all);
+    ~tmpdir();
 
-		inline const std::string operator*() const {
-			return path;
-		}
-	
-	private:
-		std::string path;
-	};
+    inline const std::string operator*() const {
+        return path;
+    }
 
-	class mount : public mountpoint
-	{
-	public:
-        mount() = default;
-		mount(const std::string& where, perms_t mode = file_perms::owner_all);
-		mount(const std::string& from, const std::string& where, perms_t mode = file_perms::owner_all | file_perms::group_all);
+private:
+    std::string path;
+};
 
-		void bind(const std::string& from, const std::string& where, perms_t mode = file_perms::owner_all | file_perms::group_all);
+class mount : public mountpoint
+{
+public:
+    mount() = default;
+    mount(const std::string& where, perms_t mode = file_perms::owner_all);
+    mount(const std::string& from, const std::string& where, perms_t mode = file_perms::owner_all | file_perms::group_all);
 
-		void temp(const std::string& where, perms_t mode = file_perms::temporary);
-		void proc(const std::string& where);
-	};
+    void bind(const std::string& from, const std::string& where, perms_t mode = file_perms::owner_all | file_perms::group_all);
 
+    void temp(const std::string& where, perms_t mode = file_perms::temporary);
+    void proc(const std::string& where);
+};
 } // end namespace
 
 class bad_mount final : public std::exception
 {
 public:
-	const std::string path() const {
-		return msg_path;
-	}
+    const std::string path() const {
+        return msg_path;
+    }
 
-	const char *what() const noexcept override;
+    const char *what() const noexcept override;
 
 protected:
-	bad_mount(const std::string& path);
+    explicit bad_mount(const std::string& path);
 
 private:
-	friend class fsys::mount;
+    friend class fsys::mount;
 
-	std::string msg_text;
-	std::string msg_path;
+    std::string msg_text;
+    std::string msg_path;
 };
 
 /*!

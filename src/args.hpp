@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef	ARGS_HPP
-#define	ARGS_HPP
+#ifndef ARGS_HPP
+#define ARGS_HPP
 
 #include "strings.hpp"
 
@@ -31,160 +31,159 @@ public:
     class Option
     {
     public:
-	Option(const Option&) = delete;
-	Option& operator=(const Option&) = delete;
+        Option(const Option&) = delete;
+        Option& operator=(const Option&) = delete;
 
-	inline operator bool() const {
-	    return used_count > 0;
-	}
+        explicit inline operator bool() const {
+            return used_count > 0;
+        }
 
-	inline bool operator!() const {
-	    return used_count == 0;
-	}
+        inline bool operator!() const {
+            return used_count == 0;
+        }
 
     protected:
-	friend class args;
+        friend class args;
 
-	char short_option;
-	const char *long_option;
-	const char *uses_option;
-	const char *help_string;
-	bool trigger_option;
-	unsigned used_count;
+        Option(char shortopt = 0, const char *longopt = nullptr, const char *value = nullptr, const char *help = nullptr) noexcept;
 
-	Option(char shortopt = 0, const char *longopt = nullptr, const char *value = nullptr, const char *help = nullptr) noexcept;
+        virtual ~Option();
 
-	virtual ~Option();
+        virtual void assign(const char *value) = 0;
 
-	virtual void assign(const char *value) = 0;
+        void fail(const char *reason);
 
-	void fail(const char *reason);
-	
     private:
-	Option *next;
+        Option *next;
+        char short_option;
+        const char *long_option;
+        const char *uses_option;
+        const char *help_string;
+        bool trigger_option;
+        unsigned used_count;
     };
 
     class list final
     {
     public:
-	list& operator=(const list&) = delete;
-	list(const list&) = delete;
+        list& operator=(const list&) = delete;
+        list(const list&) = delete;
 
-	inline list() noexcept = default;
+        inline list() noexcept = default;
 
-	const std::string operator[](unsigned index);
-	size_t size();
-    };	
+        const std::string operator[](unsigned index);
+        size_t size();
+    };
 
     class flag final : public Option
     {
     public:
-	flag(char short_opt, const char *long_opt = nullptr, const char *help_opt = nullptr, bool single_use = true) noexcept;
+        flag(char short_opt, const char *long_opt = nullptr, const char *help_opt = nullptr, bool single_use = true) noexcept;
 
-	inline unsigned operator*() const {
-	    return used_count;
-	}
+        inline unsigned operator*() const {
+            return used_count;
+        }
 
-	inline void set(unsigned value = 1) {
-	    used_count = value;
-	}
+        inline void set(unsigned value = 1) {
+            used_count = value;
+        }
 
-	inline flag& operator=(unsigned value) {
-	    used_count = value;
-	    return *this;
-	}
+        inline flag& operator=(unsigned value) {
+            used_count = value;
+            return *this;
+        }
 
     private:
-	bool single;
+        bool single;
 
-	void assign(const char *value) final;
+        void assign(const char *value) final;
     };
 
     class group final : public Option
     {
     public:
-	group(const char *help) noexcept;
+        explicit group(const char *help) noexcept;
 
     private:
-	void assign(const char *value) final;
+        void assign(const char *value) final;
     };
 
     class string final : public Option
     {
     public:
-	string(char shortopt, const char *longopt = nullptr, const char *help = nullptr, const char *type = "text", const std::string& dvalue = std::string()) noexcept;
-		
-	inline void set(const std::string& string) {
-	    text = string;
-	}
+        string(char shortopt, const char *longopt = nullptr, const char *help = nullptr, const char *type = "text", const std::string& dvalue = std::string()) noexcept;
 
-	inline string& operator=(const std::string& string) {
-	    text = string;
-	    return *this;
-	}
+        inline void set(const std::string& string) {
+            text = string;
+        }
 
-	inline const std::string operator*() const {
-	    return text;
-	}
+        inline string& operator=(const std::string& string) {
+            text = string;
+            return *this;
+        }
 
-	inline const char *c_str() const {
-	    return text.c_str();
-	}
+        inline const std::string operator*() const {
+            return text;
+        }
+
+        inline const char *c_str() const {
+            return text.c_str();
+        }
 
     private:
-	std::string text;
+        std::string text;
 
-	void assign(const char *value) final;
+        void assign(const char *value) final;
     };
 
     class charcode final : public Option
     {
     public:
-	charcode(char shortopt, const char *longopt = nullptr, const char *help = nullptr, const char *type = "text", char value = ' ') noexcept;
-		
-	inline void set(char value) {
-	    code = value;
-	}
+        charcode(char shortopt, const char *longopt = nullptr, const char *help = nullptr, const char *type = "text", char value = ' ') noexcept;
+        
+    inline void set(char value) {
+        code = value;
+    }
 
-	inline charcode& operator=(char value) {
-	    code = value;
-	    return *this;
-	}
+    inline charcode& operator=(char value) {
+        code = value;
+        return *this;
+    }
 
-	inline char operator*() const {
-	    return code;
-	}
+    inline char operator*() const {
+        return code;
+    }
 
     private:
-	char code;
+        char code;
     
-	void assign(const char *value) final;
+        void assign(const char *value) final;
     };
 
     class number final : public Option
     {
     public:
-	number(char shortopt, const char *longopt = nullptr, const char *help = nullptr, const char *type = "text", long value = 0) noexcept;
+        number(char shortopt, const char *longopt = nullptr, const char *help = nullptr, const char *type = "text", long value = 0) noexcept;
 
-	number() noexcept;
-		
-	inline void set(long value) {
-	    num = value;
-	}
+        number() noexcept;
+        
+        inline void set(long value) {
+            num = value;
+        }
 
-	inline number& operator=(long value) {
-	    num = value;
-	    return *this;
-	}
+        inline number& operator=(long value) {
+            num = value;
+            return *this;
+        }
 
-	inline long operator*() const {
-	    return num;
-	}
+        inline long operator*() const {
+            return num;
+        }
 
     private:
-	long num;
+        long num;
 
-	void assign(const char *value) final;
+        void assign(const char *value) final;
     };
 
     args(const args& from) = delete;
@@ -193,19 +192,19 @@ public:
     args(const char **argv, Mode mode = Mode::NONE);
     
     inline const std::string operator[](unsigned index) const {
-	return argv[index];
+        return argv[index];
     }
 
     inline const std::string operator*() const {
-	return argv0;
+        return argv0;
     }
 
     inline size_t size() const {
-	return argv.size();
+        return argv.size();
     }
 
     inline const char **paths() const {
-	return offset;
+        return offset;
     }
 
     static const std::string exec_path();

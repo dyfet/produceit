@@ -1,3 +1,7 @@
+v0.2.1
+* Code cleanup, particularly ruby scripting
+* Restructured top cmake for clarity and completeness
+
 v0.2.0
 * Initial lxc utility; lxc-user.
 

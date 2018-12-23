@@ -7,7 +7,7 @@
 
 ['optparse', 'fileutils'].each {|mod| require mod}
 
-META = ['Packages', 'Packages.gz', 'Packages.bz2', 'Sources', 'Sources.gz', 'Sources.bz2']
+META = ['Packages', 'Packages.gz', 'Packages.bz2', 'Sources', 'Sources.gz', 'Sources.bz2'].freeze
 banner = 'Usage: deb-release [options] [archive-directory]'
 verbose = false
 
@@ -25,23 +25,25 @@ OptionParser.new do |opts|
 end.parse!
 
 abort(banner) if ARGV.size > 1
-if ARGV.size > 0
+if !ARGV.empty?
   path = ARGV[0]
 else
   path = '.'
 end
 release = "#{path}/Release"
-abort("deb-release: #{path}: not a directory") if !File.directory?(path)
-abort("deb-release: #{path}: no release file") if !File.exists?(release)
+abort("deb-release: #{path}: not a directory") unless File.directory?(path)
+abort("deb-release: #{path}: no release file") unless File.exist?(release)
 
-relinfo = {:Archive => 'stretch', :Codename => '', :Origin => '', :Label => '', :Architecture => 'all'}
+relinfo = {Archive: 'stretch', Codename: '', Origin: '', Label: '', Architecture: 'all'}
 
 File.open(release, 'r') do |fp; line, key, value|
-  while(line = fp.gets)
-      next unless line =~ /^.*[:]/
-      key, value = line.split(/\:/).each {|s| s.strip!}
-      next if value == ""
-      relinfo[key.to_sym] = value
+  while (line = fp.gets)
+    next unless line =~ /^.*[:]/
+
+    key, value = line.split(/\:/).each {|s| s.strip!}
+    next if value.empty?
+
+    relinfo[key.to_sym] = value
   end
 end
 
@@ -51,32 +53,35 @@ end
 
 Dir.chdir(path)
 File.open('Release.tmp', 'w') do |tmp|
-  tmp << "Archive: #{relinfo[:Archive]}\n" unless relinfo[:Archive] == ""
-  tmp << "Codename: #{relinfo[:Codename]}\n" unless relinfo[:Codename] == ""
-  tmp << "Origin: #{relinfo[:Origin]}\n" unless relinfo[:Origin] == ""
-  tmp << "Label: #{relinfo[:Label]}\n"  unless relinfo[:Label] == ""
-  tmp << "Architecture: #{relinfo[:Architecture]}\n" unless relinfo[:Architecture] == ""
-  tmp << "Date: " << `date -R -u`
+  tmp << "Archive: #{relinfo[:Archive]}\n" unless relinfo[:Archive].empty?
+  tmp << "Codename: #{relinfo[:Codename]}\n" unless relinfo[:Codename].empty?
+  tmp << "Origin: #{relinfo[:Origin]}\n" unless relinfo[:Origin].empty?
+  tmp << "Label: #{relinfo[:Label]}\n" unless relinfo[:Label].empty?
+  tmp << "Architecture: #{relinfo[:Architecture]}\n" unless relinfo[:Architecture].empty?
+  tmp << 'Date: ' << `date -R -u`
 
-  tmp << "MD5Sum:\n"
-  META.each do |file, sum, size|
-    next unless File.exists?(file)
+  tmp << 'MD5Sum:\n'
+  META.each do |file; sum, size|
+    next unless File.exist?(file)
+
     sum=`md5sum "#{file}"`.split(' ').first
     size=`wc -c "#{file}"`.lstrip
     tmp << " #{sum} #{size}"
   end
 
-  tmp << "SHA1:\n"
-  META.each do |file, sum, size|
-    next unless File.exists?(file)
+  tmp << 'SHA1:\n'
+  META.each do |file; sum, size|
+    next unless File.exist?(file)
+
     sum=`sha1sum "#{file}"`.split(' ').first
     size=`wc -c "#{file}"`.lstrip
     tmp << " #{sum} #{size}"
   end
 
-  tmp << "SHA256:\n"
-  META.each do |file, sum, size|
-    next unless File.exists?(file)
+  tmp << 'SHA256:\n'
+  META.each do |file; sum, size|
+    next unless File.exist?(file)
+
     sum=`sha256sum "#{file}"`.split(' ').first
     size=`wc -c "#{file}"`.lstrip
     tmp << " #{sum} #{size}"
@@ -84,4 +89,3 @@ File.open('Release.tmp', 'w') do |tmp|
 
   system 'mv', 'Release.tmp', 'Release'
 end
- 

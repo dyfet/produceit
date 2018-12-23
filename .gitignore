@@ -26,6 +26,7 @@ _*
 cmake_*.cmake
 ALL_BUILD_*
 Makefile
+rubocop.json
 Custom.cmake
 CMakeCache.txt
 install_manifest.txt

@@ -28,7 +28,7 @@ public:
 	keyfile& operator=(const keyfile&) = delete;
 
 	keyfile() = default;
-	keyfile(const std::string& path) : keyfile() {
+    explicit keyfile(const std::string& path) : keyfile() {
 		load(path);
 	}
 
