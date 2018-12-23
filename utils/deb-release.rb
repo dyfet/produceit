@@ -53,11 +53,11 @@ end
 
 Dir.chdir(path)
 File.open('Release.tmp', 'w') do |tmp|
-  tmp << "Archive: #{relinfo[:Archive]}\n" unless relinfo[:Archive].blank?
-  tmp << "Codename: #{relinfo[:Codename]}\n" unless relinfo[:Codename].blank?
-  tmp << "Origin: #{relinfo[:Origin]}\n" unless relinfo[:Origin].blank?
-  tmp << "Label: #{relinfo[:Label]}\n" unless relinfo[:Label].blank?
-  tmp << "Architecture: #{relinfo[:Architecture]}\n" unless relinfo[:Architecture].blank?
+  tmp << "Archive: #{relinfo[:Archive]}\n" unless relinfo[:Archive].empty?
+  tmp << "Codename: #{relinfo[:Codename]}\n" unless relinfo[:Codename].empty?
+  tmp << "Origin: #{relinfo[:Origin]}\n" unless relinfo[:Origin].empty?
+  tmp << "Label: #{relinfo[:Label]}\n" unless relinfo[:Label].empty?
+  tmp << "Architecture: #{relinfo[:Architecture]}\n" unless relinfo[:Architecture].empty?
   tmp << 'Date: ' << `date -R -u`
 
   tmp << 'MD5Sum:\n'
