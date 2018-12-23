@@ -15,8 +15,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef	ARGS_HPP
-#define	ARGS_HPP
+#ifndef ARGS_HPP
+#define ARGS_HPP
 
 #include "strings.hpp"
 
@@ -38,9 +38,9 @@ public:
             return used_count > 0;
         }
 
-	inline bool operator!() const {
-	    return used_count == 0;
-	}
+        inline bool operator!() const {
+            return used_count == 0;
+        }
 
     protected:
         friend class args;
@@ -140,19 +140,19 @@ public:
     {
     public:
         charcode(char shortopt, const char *longopt = nullptr, const char *help = nullptr, const char *type = "text", char value = ' ') noexcept;
-		
-	inline void set(char value) {
-	    code = value;
-	}
+        
+    inline void set(char value) {
+        code = value;
+    }
 
-	inline charcode& operator=(char value) {
-	    code = value;
-	    return *this;
-	}
+    inline charcode& operator=(char value) {
+        code = value;
+        return *this;
+    }
 
-	inline char operator*() const {
+    inline char operator*() const {
         return code;
-	}
+    }
 
     private:
         char code;
@@ -166,7 +166,7 @@ public:
         number(char shortopt, const char *longopt = nullptr, const char *help = nullptr, const char *type = "text", long value = 0) noexcept;
 
         number() noexcept;
-		
+        
         inline void set(long value) {
             num = value;
         }
