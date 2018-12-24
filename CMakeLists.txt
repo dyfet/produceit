@@ -41,7 +41,6 @@ file(GLOB scripts utils/*.rb)
 file(GLOB bman1 src/*.1)
 file(GLOB uman1 utils/*.1)
 file(GLOB markdown *.md)
-file(GLOB issues .gitlab/issue_templates/*.md)
 
 add_subdirectory(src)
 
@@ -49,7 +48,7 @@ add_subdirectory(src)
 
 add_custom_target(manpages SOURCES ${bman1} ${uman1})
 add_custom_target(scripts SOURCES ${scripts})
-add_custom_target(support SOURCES produceit.conf config.hpp.in Doxyfile.in ${issues} .gitlab-ci.yml .rubocop.yml)
+add_custom_target(support SOURCES produceit.conf config.hpp.in Doxyfile.in .rubocop.yml)
 add_custom_target(docs SOURCES LICENSE ${markdown}
     COMMAND doxygen Doxyfile
 )
