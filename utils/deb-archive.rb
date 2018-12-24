@@ -54,11 +54,11 @@ abort("*** deb-archive: #{target}: not a directory") unless File.directory?(targ
 files.each do |file; ext, basename, origin|
   ext = File.extname(file)
   basename = File.basename(file)
-  to_dest = target + '/' + basename
+  dest = target + '/' + basename
 
   abort("*** deb-archive: #{basename}: not found") unless File.file?(file)
   abort("*** deb-archive: #{basename}: not debian source control") unless EXTS.include?(ext)
-  abort("*** deb-archive: #{basename}: target exists") if File.file?(to_dest) && !force
+  abort("*** deb-archive: #{basename}: target exists") if File.file?(dest) && !force
   origin = File.dirname(file)
   print "#{header} #{basename}...\n" if verbose == true
   FileUtils.copy_file(file, dest, preserve) if move == false
