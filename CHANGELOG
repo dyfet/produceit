@@ -1,3 +1,6 @@
+v0.2.3
+* Bug fixes for formatting, newline
+
 v0.2.1
 * Code cleanup, particularly ruby scripting
 * Restructured top cmake for clarity and completeness

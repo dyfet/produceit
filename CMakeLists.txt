@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1.0)
-project(ProduceIt VERSION 0.2.2 LANGUAGES CXX)
+project(ProduceIt VERSION 0.2.3 LANGUAGES CXX)
 string(TOLOWER "${PROJECT_NAME}" PROJECT_ARCHIVE)
 set(PROJECT_RELEASE "1")
 
