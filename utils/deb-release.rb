@@ -60,7 +60,7 @@ File.open('Release.tmp', 'w') do |tmp|
   tmp << "Architecture: #{relinfo[:Architecture]}\n" unless relinfo[:Architecture].empty?
   tmp << 'Date: ' << `date -R -u`
 
-  tmp << 'MD5Sum:\n'
+  tmp << "MD5Sum:\n"
   META.each do |file; sum, size|
     next unless File.exist?(file)
 
@@ -69,7 +69,7 @@ File.open('Release.tmp', 'w') do |tmp|
     tmp << " #{sum} #{size}"
   end
 
-  tmp << 'SHA1:\n'
+  tmp << "SHA1:\n"
   META.each do |file; sum, size|
     next unless File.exist?(file)
 
@@ -78,7 +78,7 @@ File.open('Release.tmp', 'w') do |tmp|
     tmp << " #{sum} #{size}"
   end
 
-  tmp << 'SHA256:\n'
+  tmp << "SHA256:\n"
   META.each do |file; sum, size|
     next unless File.exist?(file)
 
