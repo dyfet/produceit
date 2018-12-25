@@ -38,6 +38,7 @@ shellit
 lxcuser
 core
 test_*
+!test_*.cpp
 
 *.ddeb
 *.buildinfo
