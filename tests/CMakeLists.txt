@@ -5,3 +5,8 @@ add_executable(test_output  test_output.cpp)
 add_dependencies(test_output common)
 target_link_libraries(test_output common)
 add_test(NAME test-output COMMAND test_output)
+
+add_executable(test_strings  test_strings.cpp)
+add_dependencies(test_strings common)
+target_link_libraries(test_strings common)
+add_test(NAME test-strings COMMAND test_strings)

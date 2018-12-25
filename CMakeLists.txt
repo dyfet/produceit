@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1.0)
-project(ProduceIt VERSION 0.2.3 LANGUAGES CXX)
+project(ProduceIt VERSION 0.2.4 LANGUAGES CXX)
 string(TOLOWER "${PROJECT_NAME}" PROJECT_ARCHIVE)
 set(PROJECT_RELEASE "1")
 
@@ -112,6 +112,7 @@ if(CMAKE_COVERAGE_TYPE MATCHES "gcov")
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMAND rm -f *.gcov
         COMMAND tests/test_output
+        COMMAND tests/test_strings
         COMMAND gcov -b src/*.cpp -o src/CMakeFiles/common.dir
     )
 endif()

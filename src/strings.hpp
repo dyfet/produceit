@@ -31,12 +31,14 @@ inline bool begins_with(const S s, const B b) {
 }
 
 template<typename S = std::string, typename E = std::string>
-inline bool ends_with(const S s, const E e) {
+inline bool ends_with(const S& s, const E& e) {
     std::string::size_type position = s.rfind(e);
     if (position == std::string::npos)
         return false;
+    if(s.size() < e.size())
+        return false;
     else
-        return (s.size() - position) == e.size();
+        return s.substr(s.size() - position) == e;
 }
 
 template<typename S = std::string>
@@ -68,13 +70,49 @@ inline std::string strip(const std::string& str)
 
 inline bool eq(const char *p1, const char *p2)
 {
+    if(!p1 && !p2)
+        return true;
+    if(!p1 || !p2)
+        return false;
     return !strcmp(p1, p2);
 }
 
 inline bool eq(const char *p1, const char *p2, size_t len)
 {
+    if(!p1 && !p2)
+        return true;
+    if(!p1 || !p2)
+        return false;
     return !strncmp(p1, p2, len);
 }
+
+// convenience function for string conversions if not explicit for template
+inline std::string upper_case(const char *s)
+{
+    return upper_case(std::string(s));
+}
+
+inline std::string lower_case(const char *s)
+{
+    return lower_case(std::string(s));
+}
+
+inline std::string strip(const char *s)
+{
+    return strip(std::string(s));
+}
+
+inline bool begins_with(const char *s, const char *b)
+{
+    return begins_with<std::string>(s, b);
+}
+
+inline bool ends_with(const char *s, const char *e)
+{
+    return ends_with<std::string,std::string>(s, e);
+}
+
+
 
 std::vector<std::string> split(const std::string& str, const std::string& delim = " ");
 
