@@ -2,8 +2,6 @@
 #include <compiler.hpp>
 #include <output.hpp>
 #include <keyfile.hpp>
-
-#undef NDEBUG
 #include <cassert>
 
 int main(int argc, char **argv)

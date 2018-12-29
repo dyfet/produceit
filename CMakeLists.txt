@@ -7,7 +7,7 @@ if (POLICY CMP0063)
   cmake_policy(SET CMP0063 OLD)
 endif()
 
-if(CMAKE_COVERAGE_TYPE MATCHES "gcov")
+if(CMAKE_COVERAGE_TYPE MATCHES "gcov" AND CMAKE_BUILD_TYPE MATCHES "Debug")
     set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
 endif()
@@ -106,8 +106,7 @@ endif()
 
 # testing and coverage
 
-if(CMAKE_COVERAGE_TYPE MATCHES "gcov")
-    set(BUILD_TESTING true)
+if(CMAKE_COVERAGE_TYPE MATCHES "gcov" AND CMAKE_BUILD_TYPE MATCHES "Debug")
     add_custom_target(coverage
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         COMMAND rm -f *.gcov
@@ -117,7 +116,7 @@ if(CMAKE_COVERAGE_TYPE MATCHES "gcov")
     )
 endif()
 
-if(BUILD_TESTING)
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
     enable_testing()
     add_subdirectory(tests)
 endif()
