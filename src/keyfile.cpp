@@ -45,7 +45,7 @@ bool keyfile::load(const std::string& path)
 		if(end == std::string::npos)
 			len = end;
 		input = input.substr(begin, len);
-		if(begins_with(input, std::string("[")) && ends_with(input, std::string("]"))) {
+		if(begins_with(input, "[") && ends_with(input, "]")) {
 			section = input.substr(1, input.size() - 2);
 			continue;
 		}

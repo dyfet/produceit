@@ -23,5 +23,13 @@ int main(int argc, char **argv)
 	assert(strip("   testing ") == "testing");
 	assert(begins_with<std::string>("belong", "be"));
 	assert(ends_with("belong", "ong"));
+
+	std::string input = "[test]";
+	assert(begins_with(input, "["));
+	assert(!ends_with(input, "Z"));
+	assert(ends_with(input, "]"));
+	assert(begins_with(input, std::string("[")));
+	assert(ends_with(input, std::string("]")));
+
 }
 

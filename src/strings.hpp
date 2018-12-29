@@ -32,13 +32,22 @@ inline bool begins_with(const S s, const B b) {
 
 template<typename S = std::string, typename E = std::string>
 inline bool ends_with(const S& s, const E& e) {
+    if(s.size() < e.size())
+        return false;
     std::string::size_type position = s.rfind(e);
     if (position == std::string::npos)
         return false;
-    if(s.size() < e.size())
+    return s.substr(position) == e;
+}
+
+template<typename S = std::string>
+inline bool ends_with(const S& s, const char *e) {
+    if(s.size() < strlen(e))
         return false;
-    else
-        return s.substr(s.size() - position) == e;
+    std::string::size_type position = s.rfind(e);
+    if (position == std::string::npos)
+        return false;
+    return s.substr(position) == e;
 }
 
 template<typename S = std::string>

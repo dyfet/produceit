@@ -1,3 +1,7 @@
+v0.2.5
+* Fix ends_with api
+* Added keyfile test
+
 v0.2.4
 * Added strings api testing
 * Improved strings api
