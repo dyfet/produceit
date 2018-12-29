@@ -112,6 +112,7 @@ if(CMAKE_COVERAGE_TYPE MATCHES "gcov" AND CMAKE_BUILD_TYPE MATCHES "Debug")
         COMMAND rm -f *.gcov
         COMMAND tests/test_output
         COMMAND tests/test_strings
+        COMMAND tests/test_keyfile
         COMMAND gcov -b src/*.cpp -o src/CMakeFiles/common.dir
     )
 endif()
