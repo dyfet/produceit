@@ -8,6 +8,7 @@ build:
   script:
     - cmake -DCMAKE_BUILD_TYPE=Debug  --build . | tee cmake.log
     - make | tee make.log
+    - ctest | tee test.log
   tags:
     - docker
   except:
