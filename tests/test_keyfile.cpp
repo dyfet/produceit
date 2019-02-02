@@ -1,4 +1,4 @@
-#include "../config.hpp"
+#include "config.hpp"
 #include <compiler.hpp>
 #include <output.hpp>
 #include <keyfile.hpp>
