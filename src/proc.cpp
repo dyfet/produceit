@@ -24,11 +24,11 @@
 
 using namespace std;
 
-const char **create_env(const std::map<string,string>& env)
+const char **create_env(const std::unordered_map<string,string>& env)
 {
 	auto envp = new const char*[env.size() + 1];
 	int pos = 0;
-	for(auto pair : env) {
+    for(const auto& pair : env) {
 		auto entry = pair.first + "=" + pair.second;
 		envp[pos++] = ::strdup(entry.c_str());
 	}

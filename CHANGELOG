@@ -1,3 +1,6 @@
+v0.2.6
+* Unordered map for config
+
 v0.2.5
 * Fix ends_with api
 * Added keyfile test

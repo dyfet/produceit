@@ -19,31 +19,31 @@
 #define	KEYFILE_HPP
 
 #include "strings.hpp"
-#include <map>
+#include <unordered_map>
 
 class keyfile final
 {
 public:
-	keyfile(const keyfile&) = delete;
-	keyfile& operator=(const keyfile&) = delete;
+    keyfile(const keyfile&) = delete;
+    keyfile& operator=(const keyfile&) = delete;
 
-	keyfile() = default;
+    keyfile() = default;
     explicit keyfile(const std::string& path) : keyfile() {
-		load(path);
-	}
+        load(path);
+    }
 
-	inline std::map<std::string, std::string>& operator[](const std::string& section) {
-		return sections[section];
-	}
+    inline std::unordered_map<std::string, std::string>& operator[](const std::string& section) {
+	    return sections[section];
+    }
 
-	inline std::map<std::string, std::string> at(const std::string& section = "_") const {
+	inline std::unordered_map<std::string, std::string> at(const std::string& section = "_") const {
 		return sections.at(section);
 	}
 
 	bool load(const std::string& path);
 
 private:
-	std::map<std::string, std::map<std::string, std::string>> sections;
+	std::unordered_map<std::string, std::unordered_map<std::string, std::string>> sections;
 };
 
 /*!
