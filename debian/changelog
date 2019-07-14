@@ -1,0 +1,45 @@
+produceit (0.2.5-1) UNRELEASED; urgency=low
+
+  * Fixed system paths in rules
+  * Fixed keyfile processing
+
+ -- David Sugar <tychosoft@gmail.com>  Sat, 29 Dec 2018 15:03:10 -0500
+
+produceit (0.2.4-1) UNRELEASED; urgency=low
+
+  * Improved strings api
+
+ -- David Sugar <tychosoft@gmail.com>  Tue, 25 Dec 2018 11:25:22 -0500
+
+produceit (0.2.3-1) UNRELEASED; urgency=low
+
+  * Code cleanup
+  * Bug fix for deb-archive
+  * Newline fix for deb-release
+
+ -- David Sugar <tychosoft@gmail.com>  Mon, 24 Dec 2018 08:12:48 -0500
+
+produceit (0.2.0-2) UNRELEASED; urgency=low
+
+  * Simplified debian packaging
+
+ -- David Sugar <tychosoft@gmail.com>  Tue, 27 Nov 2018 04:56:39 -0500
+
+produceit (0.2.0-1) UNRELEASED; urgency=low
+
+  * Added lxcuser command.
+
+ -- David Sugar <tychosoft@gmail.com>  Fri, 23 Nov 2018 11:31:11 -0500
+
+produceit (0.1.1-1) UNRELEASED; urgency=low
+
+  * Fixed deb-remove.
+
+ -- David Sugar <tychosoft@gmail.com>  Sat, 28 Jul 2018 10:25:24 -0400
+
+produceit (0.1.0-2) UNRELEASED; urgency=low
+
+  * Initial release.
+
+ -- David Sugar <tychosoft@gmail.com>  Sun, 15 Jul 2018 16:37:49 -0400
+

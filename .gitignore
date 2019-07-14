@@ -5,16 +5,25 @@ CMakeScripts/
 Debug/
 Release/
 Testing/
-doc/
+doxy/
+.custom/
 
 .idea/*
 !.idea/inspectionProfiles
+!.idea/inspectionProfiles/*
+
+cmake-build-*/
 build/
+deploy/
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+.codelite/
+*.xcodeproj/
+*.iws
+*.gcov
 
 _*
 .ninja*
@@ -22,21 +31,22 @@ _*
 *.workspace
 *.ninja
 *.user
-*.gcov
+*.user.*
 cmake_*.cmake
 ALL_BUILD_*
-Makefile
 rubocop.json
-Custom.cmake
+Makefile
 CMakeCache.txt
 install_manifest.txt
+coverage.xml
 
-Doxyfile
+custom.cmake
 config.hpp
 buildit
 shellit
 lxcuser
 core
+*.core
 test_*
 !test_*.cpp
 

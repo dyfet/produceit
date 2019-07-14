@@ -1,0 +1,36 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+export DEB_CFLAGS_MAINT_APPEND  = -Wall -pedantic
+export DEB_LDFLAGS_MAINT_APPEND = -Wl,--as-needed
+
+# Ensure at build time that the library has no dependencies on undefined
+# symbols, and speed up loading.  Fix cmake issues and use buildflags.
+LDFLAGS = $(shell dpkg-buildflags --get LDFLAGS)
+CPPFLAGS = $(shell dpkg-buildflags --get CPPFLAGS)
+CXXFLAGS = $(shell dpkg-buildflags --get CXXFLAGS)
+#CXXFLAGS += $(CPPFLAGS)
+
+DEB_DH_INSTALL_ARGS := --sourcedir=debian/tmp
+DEB_INSTALL_DOCS_ALL :=
+DEB_INSTALL_CHANGELOG_ALL := ChangeLog
+DEB_HOST_MULTIARCH ?= $(shell dpkg-architecture -qDEB_HOST_MULTIARCH)
+
+%:
+	dh $@
+
+.PHONY: override_dh_fixperms override_dh_auto_configure
+
+override_dh_auto_configure:
+	dh_auto_configure -- \
+		-DCMAKE_INSTALL_SYSCONFDIR:PATH=/etc \
+		-DCMAKE_INSTALL_LOCALSTATEDIR:PATH=/var \
+		-DCMAKE_BUILD_TYPE=RelWithDebInfo \
+		-DCMAKE_CXX_FLAGS="$(CXXFLAGS)" \
+		-DCMAKE_EXE_LINKER_FLAGS="$(LDFLAGS)"
+
+override_dh_fixperms:
+	dh_fixperms
+	chmod 4755 debian/produceit/usr/bin/shellit
+	chmod 4755 debian/produceit/usr/bin/buildit
+	chmod 4755 debian/produceit/usr/bin/lxcuser
+

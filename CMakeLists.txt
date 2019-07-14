@@ -1,35 +1,20 @@
 cmake_minimum_required(VERSION 3.1.0)
-project(ProduceIt VERSION 0.2.6 LANGUAGES CXX)
-string(TOLOWER "${PROJECT_NAME}" PROJECT_ARCHIVE)
-set(PROJECT_RELEASE "1")
+project(ProduceIt VERSION 0.3.0 LANGUAGES CXX)
+set(COPYRIGHT 2019)
 
-if(CMAKE_COVERAGE_TYPE MATCHES "gcov" AND CMAKE_BUILD_TYPE MATCHES "Debug")
-    set(CMAKE_CXX_OUTPUT_EXTENSION_REPLACE 1)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -fprofile-arcs -ftest-coverage")
-endif()
+include(cmake/custom.cmake OPTIONAL)
+include(cmake/project.cmake)
+include(cmake/features.cmake)
+include(cmake/coverage.cmake)
+include(cmake/deploy.cmake OPTIONAL)
 
-if(CMAKE_GENERATOR MATCHES "Unix")
-    set(CMAKE_MAINTAINER true)
-endif()
+# Setup headers
 
-if(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
-    set(LINUX true)
-endif()
-
-include(${CMAKE_CURRENT_SOURCE_DIR}/Custom.cmake OPTIONAL)
-include(GNUInstallDirs)
-include(CheckFunctionExists)
-
-check_function_exists(personality HAVE_PERSONALITY)
-check_function_exists(unshare HAVE_UNSHARE)
-check_function_exists(setgroups HAVE_SETGROUPS)
-configure_file(Doxyfile.in Doxyfile)
-configure_file(config.hpp.in config.hpp)
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
+configure_file(config.hpp.in config.hpp)
+configure_file(produceit.spec.in produceit.spec)
 
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_POSITION_INDEPENDENT_CODE true)
-set(PRODUCEIT_LIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}/produceit")
+# Files, common targets
 
 file(GLOB scripts utils/*.rb)
 file(GLOB bman1 src/*.1)
@@ -38,14 +23,13 @@ file(GLOB markdown *.md)
 
 add_subdirectory(src)
 
-# these give access to docs and support files when cmake is exported to an ide
+# These give access to docs and support files in an ide
 
 add_custom_target(manpages SOURCES ${bman1} ${uman1})
 add_custom_target(scripts SOURCES ${scripts})
-add_custom_target(support SOURCES produceit.conf config.hpp.in Doxyfile.in .rubocop.yml)
-add_custom_target(docs SOURCES LICENSE ${markdown}
-    COMMAND doxygen Doxyfile
-)
+add_custom_target(support SOURCES produceit.conf config.hpp.in Doxyfile .rubocop.yml produceit.spec.in)
+
+# Install targets
 
 install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/deb-release.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME deb-release )
 install(PROGRAMS ${CMAKE_SOURCE_DIR}/utils/deb-archive.rb DESTINATION ${CMAKE_INSTALL_BINDIR} RENAME deb-archive )
@@ -54,62 +38,7 @@ install(FILES ${CMAKE_SOURCE_DIR}/produceit.conf DESTINATION ${CMAKE_INSTALL_SYS
 
 install(FILES ${uman1} DESTINATION ${CMAKE_INSTALL_MANDIR}/man1)
 
-if(CMAKE_MAINTAINER)
-    add_custom_target(dist
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.tar.gz"
-        COMMAND git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" "v${PROJECT_VERSION}" 2>/dev/null || git archive -o "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-${PROJECT_VERSION}.tar.gz" --format tar.gz --prefix="${PROJECT_ARCHIVE}-${PROJECT_VERSION}/" HEAD   
-    )
-
-    add_custom_target(distclean
-        COMMAND ${CMAKE_BUILD_TOOL} clean
-        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.tar.gz"
-        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_ARCHIVE}-*.rpm"
-        COMMAND "${CMAKE_COMMAND}" -E remove -F "${CMAKE_CURRENT_BINARY_DIR}/*.pdf"
-        COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_CURRENT_BINARY_DIR}/doc"
-    )
-
-    include("${CMAKE_CURRENT_SOURCE_DIR}/debian/include.cmake" OPTIONAL)
-    include("${CMAKE_CURRENT_SOURCE_DIR}/pkg/include.cmake" OPTIONAL)
-endif()
-
-# if cross-compiling, can also generate cross-build packages...
-if(CMAKE_CROSSCOMPILING)
-    set(CPACK_SYSTEM_NAME "${PROJECT_RELEASE}.cross")
-    set(CPACK_PACKAGE_NAME "${PROJECT_ARCHIVE}")
-    set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "chroot package production and testing environment")
-    set(CPACK_PACKAGE_VENDOR "Tycho Softworks")
-    set(CPACK_PACKAGE_DESCRIPTION_FILE "${CMAKE_CURRENT_SOURCE_DIR}/README.md")
-    set(CPACK_RESOURCE_FILE_LICENSE "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
-    set(CPACK_STRIP_FILES TRUE)
-    set(CPACK_RPM_PACKAGE_URL "https://gitlab.com/tychosoft/produceit")
-    set(CPACK_RPM_PACKAGE_RELEASE ${PROJECT_RELEASE})
-    set(CPACK_RPM_PACKAGE_REQUIRES "rpm-build, ruby, gnupg2")
-    set(CPACK_RPM_PACKAGE_SUGGESTS "qemu-user-static")
-    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Tycho Softworks")
-    set(CPACK_DEBIAN_PACKAGE_DEPENDS "rpm, ruby, gnupg")
-    include(CPack)
-elseif(CMAKE_MAINTAINER)
-    add_custom_target(pdf
-        WORKING_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/doc/latex"
-        COMMAND make
-        COMMAND mv refman.pdf "${CMAKE_CURRENT_BINARY_DIR}/produceit.pdf"
-        DEPENDS docs
-    )
-endif()
-
-# testing and coverage
-
-if(CMAKE_COVERAGE_TYPE MATCHES "gcov" AND CMAKE_BUILD_TYPE MATCHES "Debug")
-    add_custom_target(coverage
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMAND rm -f *.gcov
-        COMMAND tests/test_output
-        COMMAND tests/test_strings
-        COMMAND tests/test_keyfile
-        COMMAND gcov -b src/*.cpp -o src/CMakeFiles/common.dir
-    )
-endif()
+# testing
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
     enable_testing()

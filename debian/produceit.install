@@ -1,0 +1,8 @@
+etc/produceit.conf
+usr/bin/buildit
+usr/bin/shellit
+usr/bin/lxcuser
+usr/share/man/man1/buildit.1
+usr/share/man/man1/shellit.1
+usr/share/man/man1/lxcuser.1
+
