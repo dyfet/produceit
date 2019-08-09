@@ -40,7 +40,6 @@ CMakeCache.txt
 install_manifest.txt
 coverage.xml
 
-debian/changelog
 custom.cmake
 config.hpp
 buildit
