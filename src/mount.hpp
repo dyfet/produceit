@@ -76,6 +76,9 @@ protected:
 class tmpdir final
 {
 public:
+    tmpdir(const tmpdir&) = delete;
+    const tmpdir& operator=(const tmpdir&) = delete;
+
     tmpdir(const std::string& where, perms_t mode = file_perms::owner_all);
     ~tmpdir();
 

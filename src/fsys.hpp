@@ -43,6 +43,8 @@ public:
         from.errcode = 0;
     }
 
+    inline ~fsys_error() = default;
+
     inline bool operator==(const fsys_error& other) const noexcept {
         return errcode == other.errcode;
     }
@@ -169,7 +171,7 @@ namespace fsys {
         other
     };
 
-    class file_status 
+    class file_status
     {
     public:
         perms_t perms;
