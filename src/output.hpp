@@ -27,7 +27,7 @@ public:
     output(const output&) = delete;
 
     output() = default;
-    ~output() override;
+    ~output() final;
 };
 
 class debug final : public std::stringstream
@@ -37,7 +37,7 @@ public:
     debug(const debug&) = delete;
 
     debug() = default;
-    ~debug() override;
+    ~debug() final;
 };
 
 class error final : public std::stringstream
@@ -47,7 +47,7 @@ public:
     error(const error&) = delete;
 
     error() = default;
-    ~error() override;
+    ~error() final;
 };
 
 class crit final : public std::stringstream
@@ -57,10 +57,10 @@ public:
     crit(const crit&) = delete;
 
     explicit crit(int code) : excode(code) {}
-    ~crit() override;
+    ~crit() final;
 
 private:
 	int excode;
 };
 
-#endif		
+#endif

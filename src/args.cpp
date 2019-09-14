@@ -38,7 +38,7 @@ const std::string args::exec_name()
 {
 	if(!instance)
 		return std::string();
-	
+
 	return instance->name;
 }
 
@@ -74,10 +74,9 @@ void args::Option::fail(const char *reason)
 		throw bad_arg(reason, short_option);
 }
 
-args::flag::flag(char shortopt, const char *longopt, const char *help, bool single_use) noexcept : 
-Option(shortopt, longopt, nullptr, help) 
+args::flag::flag(char shortopt, const char *longopt, const char *help, bool single_use) noexcept :
+Option(shortopt, longopt, nullptr, help), single(single_use)
 {
-	single = single_use;
 }
 
 args::group::group(const char *help) noexcept :
@@ -85,22 +84,19 @@ args::Option(0, nullptr, nullptr, help)
 {
 }
 
-args::string::string(char shortopt, const char *longopt, const char *helpopt, const char *type, const std::string& value) noexcept :
-args::Option(shortopt, longopt, type, helpopt)
+args::string::string(char shortopt, const char *longopt, const char *helpopt, const char *type, const std::string& optvalue) noexcept :
+args::Option(shortopt, longopt, type, helpopt), text(optvalue)
 {
-	text = value;
 }
 
-args::charcode::charcode(char shortopt, const char *longopt, const char *helpopt, const char *type, char value) noexcept :
-args::Option(shortopt, longopt, type, helpopt)
+args::charcode::charcode(char shortopt, const char *longopt, const char *helpopt, const char *type, char optvalue) noexcept :
+args::Option(shortopt, longopt, type, helpopt), code(optvalue)
 {
-	code = value;
 }
 
-args::number::number(char shortopt, const char *longopt, const char *helpopt, const char *type, long value) noexcept :
-args::Option(shortopt, longopt, type, helpopt)
+args::number::number(char shortopt, const char *longopt, const char *helpopt, const char *type, long optvalue) noexcept :
+args::Option(shortopt, longopt, type, helpopt), num(optvalue)
 {
-	num = value;
 }
 
 args::number::number() noexcept
@@ -108,7 +104,7 @@ args::number::number() noexcept
 	if(instance)
 		num = instance->value;
 	else
-		num = 0l;
+		num = 0L;
 }
 
 const std::string args::list::operator[](unsigned item)
@@ -119,37 +115,37 @@ const std::string args::list::operator[](unsigned item)
 		return std::string();
 }
 
-size_t args::list::size() 
+size_t args::list::size()
 {
 	if(instance)
 		return instance->size();
 	return 0;
 }
 
-void args::group::assign(const char *value) 
+void args::group::assign(const char *optvalue)
 {
-    UNUSED(value);
+    UNUSED(optvalue);
 }
 
-void args::flag::assign(const char *value) 
+void args::flag::assign(const char *optvalue)
 {
-    UNUSED(value);
+    UNUSED(optvalue);
 	if(single && used_count)
 		fail("option already used");
 
 	++used_count;
 }
 
-void args::string::assign(const char *value) 
+void args::string::assign(const char *optvalue)
 {
 	if(used_count)
 		fail("option already assigned");
 
-	text = value;
+	text = optvalue;
 	++used_count;
 }
 
-void args::charcode::assign(const char *value)
+void args::charcode::assign(const char *optvalue)
 {
 	long number;
 	char *endptr = nullptr;
@@ -158,19 +154,19 @@ void args::charcode::assign(const char *value)
 		fail("option already assigned");
 
 	++used_count;
-	if(value[1] == 0) {
-		code = value[0];
+	if(optvalue[1] == 0) {
+		code = optvalue[0];
 		return;
 	}
 
-	number = strtol(value, &endptr, 0);
+	number = strtol(optvalue, &endptr, 0);
 	if(!endptr || *endptr != 0 || number < 0 || number > 255)
 		fail("invalid character value");
 
     code = static_cast<char>(number);
 }
 
-void args::number::assign(const char *value)
+void args::number::assign(const char *optvalue)
 {
 	char *endptr = nullptr;
 
@@ -179,7 +175,7 @@ void args::number::assign(const char *value)
 
 	++used_count;
 
-	num = strtol(value, &endptr, 0);
+	num = strtol(optvalue, &endptr, 0);
 	if(!endptr || *endptr != 0)
 		fail("invalid value assigned");
 }
@@ -294,7 +290,7 @@ args::args(const char **list, Mode mode)
 				if(!op_value && op->uses_option)
 					throw bad_arg("missing argument", arg);
 
-				break;	
+				break;
 			}
 			op = op->next;
 		}
@@ -314,7 +310,7 @@ args::args(const char **list, Mode mode)
 					break;
 				op = op->next;
 			}
-			
+
 			if(!op)
 				throw bad_arg("unknown option", *arg);
 
@@ -324,7 +320,7 @@ args::args(const char **list, Mode mode)
 				op_value = *(list++);
 				if(op_value == nullptr)
 					throw bad_arg("argument missing", arg);
-			}			
+			}
 			op->assign(op_value);
 			++arg;
 		}
@@ -345,7 +341,7 @@ void args::help()
 			op = op->next;
 			continue;
 		}
-		
+
 		size_t hp = 0;
 
 		if(op->short_option && op->long_option && op->uses_option && !op->trigger_option) {
@@ -382,7 +378,7 @@ void args::help()
         if(op->long_option && op->uses_option) {
 			std::cout << "--" << op->long_option << "=" << op->uses_option;
             hp += strlen(op->long_option) + strlen(op->uses_option) + 3;
-        }   
+        }
         else if(op->long_option) {
 			std::cout << "--" << op->long_option;
             hp += strlen(op->long_option) + 2;
