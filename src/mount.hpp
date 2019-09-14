@@ -69,9 +69,9 @@ public:
 protected:
     inline mountpoint() = default;
 
-    static bool verbose;
-private:
     std::string path;
+
+    static bool verbose;
 };
 
 class tmpdir final
