@@ -99,7 +99,7 @@ void fsys::current_path(const std::string& path, fsys_error& err)
 
 const std::string fsys::current_path(fsys_error& err)
 {
-    char path[256]; // NOLINT
+    char path[256];
     if (nullptr == getcwd(path, sizeof(path))) {
 		err = fsys::error();
 		return std::string();
@@ -234,7 +234,7 @@ bool fsys::remove_dsc(const std::string& source, fsys_error& err)
 	bool files = false;
 
 	while(getline(changes, buffer)) {
-        if(buffer.substr(0, 6) == "Files:") { // NOLINT
+        if(buffer.substr(0, 6) == "Files:") {
             files = true;
             continue;
         }
@@ -261,7 +261,7 @@ bool fsys::copy_dsc(const std::string& source, const std::string& target, fsys_e
 	bool files = false;
 
 	while(getline(changes, buffer)) {
-        if(buffer.substr(0, 6) == "Files:") { // NOLINT
+        if(buffer.substr(0, 6) == "Files:") {
             files = true;
             continue;
         }

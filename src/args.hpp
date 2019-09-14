@@ -111,7 +111,7 @@ public:
     class string final : public Option
     {
     public:
-        string(char shortopt, const char *longopt = nullptr, const char *help = nullptr, const char *type = "text", const std::string& dvalue = std::string()) noexcept;
+        string(char shortopt, const char *longopt = nullptr, const char *help = nullptr, const char *type = "text", std::string  dvalue = std::string()) noexcept;
 
         inline void set(const std::string& string) {
             text = string;

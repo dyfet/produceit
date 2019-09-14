@@ -18,6 +18,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cassert>
+#include <utility>
 #include "args.hpp"
 
 namespace {
@@ -84,8 +85,8 @@ args::Option(0, nullptr, nullptr, help)
 {
 }
 
-args::string::string(char shortopt, const char *longopt, const char *helpopt, const char *type, const std::string& optvalue) noexcept :
-args::Option(shortopt, longopt, type, helpopt), text(optvalue)
+args::string::string(char shortopt, const char *longopt, const char *helpopt, const char *type, std::string  optvalue) noexcept :
+args::Option(shortopt, longopt, type, helpopt), text(std::move(optvalue))
 {
 }
 

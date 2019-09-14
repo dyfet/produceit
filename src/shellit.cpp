@@ -317,7 +317,7 @@ int main(int argc, const char **argv)
         // home is based on mode...
         auto userpath = *session + pwd->pw_dir;
         fsys::mount home_mount;
-        if(exec_uid >= 1000) { // NOLINT
+        if(exec_uid >= 1000) {
             if(exec_paths[0])
                 home_mount.bind(pwd->pw_dir, userpath);
             else
@@ -350,13 +350,13 @@ int main(int argc, const char **argv)
             endpwent();
             endgrent();
 
-            const char *shell_cmd[3] = { // NOLINT
+            const char *shell_cmd[3] = {
                 env["SHELL"].c_str(),
                 "-l",
                 nullptr,
             };
-            umask(022); // NOLINT
-            ::execve(shell_cmd[0], (char *const*)shell_cmd, (char *const *)create_env(env)); // NOLINT
+            umask(022);
+            ::execve(shell_cmd[0], (char *const*)shell_cmd, (char *const *)create_env(env));
         }
         else {
             ::setenv("CWD", cwd.c_str(), 1);

@@ -41,14 +41,14 @@ args::flag update('u', "--update", "update before packaging");
 args::flag verbose('v', "--verbose", "display operations");
 keyfile etc_config;
 
-const char *apt_update[] = { // NOLINT
+const char *apt_update[] = {
     "apt-get update",
     "/usr/bin/apt-get",
     "update",
     nullptr,
 };
 
-const char *apt_upgrade[] = { // NOLINT
+const char *apt_upgrade[] = {
     "apt-get dist-upgrade",
     "/usr/bin/apt-get",
     "-y",
@@ -56,7 +56,7 @@ const char *apt_upgrade[] = { // NOLINT
     nullptr,
 };
 
-const char *apt_autoremove[] = { // NOLINT
+const char *apt_autoremove[] = {
     "apt-get autoremove",
     "/usr/bin/apt-get",
     "-y",
@@ -64,21 +64,21 @@ const char *apt_autoremove[] = { // NOLINT
     nullptr,
 };
 
-const char *apt_autoclean[] = { // NOLINT
+const char *apt_autoclean[] = {
     "apt-get autoclean",
     "/usr/bin/apt-get",
     "autoclean",
     nullptr,
 };
 
-const char *dnf_update[] = { // NOLINT
+const char *dnf_update[] = {
     "dnf update",
     "/usr/bin/dnf",
     "update",
     nullptr,
 };
 
-const char *dnf_clean[] = { // NOLINT
+const char *dnf_clean[] = {
     "dnf clean",
     "/usr/bin/dnf",
     "clean",
@@ -109,8 +109,8 @@ void debian(const std::string &pkg) {
     std::string buffer;
     std::vector<std::string> deps;
     while (std::getline(dsc, buffer)) {
-        if (buffer.substr(0, 14) == "Build-Depends:") { // NOLINT
-            auto list = split(buffer.substr(14), ","); // NOLINT
+        if (buffer.substr(0, 14) == "Build-Depends:") {
+            auto list = split(buffer.substr(14), ",");
             for (const auto &item : list) {
                 deps.push_back(strip(item));
             }
@@ -131,10 +131,10 @@ void debian(const std::string &pkg) {
         bflag = "-B";
 
     try {
-        const char *dpkg_source[] = {"dpkg-source", "-x", from.c_str(), "source", nullptr}; // NOLINT
-        const char *dpkg_build[] = {"dpkg-buildpackage", bflag, "-us", nullptr}; // NOLINT
-        const char *dpkg_depends[] = {"mk-build-deps", "-i", nullptr}; // NOLINT
-        const char *dpkg_clean[] = {"apt-get", "-y", "purge", "--auto-remove", pkgclean.c_str(), nullptr}; // NOLINT
+        const char *dpkg_source[] = {"dpkg-source", "-x", from.c_str(), "source", nullptr};
+        const char *dpkg_build[] = {"dpkg-buildpackage", bflag, "-us", nullptr};
+        const char *dpkg_depends[] = {"mk-build-deps", "-i", nullptr};
+        const char *dpkg_clean[] = {"apt-get", "-y", "purge", "--auto-remove", pkgclean.c_str(), nullptr};
 
         fork_command(dpkg_source, is(verbose));
         fsys::current_path("source");
@@ -166,7 +166,7 @@ void debian(const std::string &pkg) {
     ::exit(0);
 }
 
-void task(const char *argv[], const char *envp[]) { // NOLINT
+void task(const char *argv[], const char *envp[]) {
     fsys::mount tmp_mount("/tmp", fsys::file_perms::temporary);
     fsys::create_directory("/tmp/buildd");
 
