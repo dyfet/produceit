@@ -23,6 +23,7 @@
 #include "keyfile.hpp"
 #include "output.hpp"
 #include <cstdlib>
+#include <climits>
 #include <sys/utsname.h>
 #include <sys/wait.h>
 
@@ -142,7 +143,7 @@ int main(int argc, const char **argv)
         else
             cpu(uts.machine);
 
-        gid_t nobody = 65535;
+        gid_t nobody = UID_MAX;
         auto grp = getgrnam("produceit");
         if(!grp)
             throw runtime_error("produceit group entry missing");
@@ -152,7 +153,7 @@ int main(int argc, const char **argv)
             nobody = pwd->pw_uid;
 
         pwd = getpwuid(exec_uid);
-        
+
         if(exec_uid) {
             if(!pwd)
                 throw runtime_error("running as unknown user");
@@ -170,11 +171,11 @@ int main(int argc, const char **argv)
                     found = true;
                     break;
                 }
-            }   
-            
+            }
+
             if(!found)
                 throw runtime_error(std::string(pwd->pw_name) + ": not member of produceit");
-        }   
+        }
 
         auto distrofs = rootfs + "/" + distro + "_" + *arch;
         if(!fsys::exists(distrofs))
@@ -189,7 +190,7 @@ int main(int argc, const char **argv)
             fsys::permissions(homeuser, mask | fsys::file_perms::set_gid_on_exe);
             fsys::owner(homeuser, nobody, grp->gr_gid);
         }
-        
+
         auto rootuser = homefs + "/root";
         if(!fsys::exists(rootuser))
             fsys::create_directory(rootuser, fsys::file_perms::owner_all);
@@ -229,7 +230,7 @@ int main(int argc, const char **argv)
             if(cp != nullptr)
                 etc_config["env"][env_id] = cp;
         }
-            
+
         // create session...
         fsys::tmpdir prefix(etc_config["system"]["prefix"]);
         fsys::tmpdir session(*prefix + "/" + std::to_string(getpid()));
@@ -316,7 +317,7 @@ int main(int argc, const char **argv)
         // home is based on mode...
         auto userpath = *session + pwd->pw_dir;
         fsys::mount home_mount;
-        if(exec_uid >= 1000) {
+        if(exec_uid >= 1000) { // NOLINT
             if(exec_paths[0])
                 home_mount.bind(pwd->pw_dir, userpath);
             else
@@ -327,7 +328,7 @@ int main(int argc, const char **argv)
 
         if(fork_handler())
             return 0;
-    
+
         chroot((*session).c_str());
         fsys::mount proc_mount;
         proc_mount.proc("/proc");
@@ -349,13 +350,13 @@ int main(int argc, const char **argv)
             endpwent();
             endgrent();
 
-            const char *shell[3] = {
+            const char *shell_cmd[3] = { // NOLINT
                 env["SHELL"].c_str(),
                 "-l",
                 nullptr,
             };
-            umask(022);
-            ::execve(shell[0], (char *const*)shell, (char *const *)create_env(env)); // NOLINT
+            umask(022); // NOLINT
+            ::execve(shell_cmd[0], (char *const*)shell_cmd, (char *const *)create_env(env)); // NOLINT
         }
         else {
             ::setenv("CWD", cwd.c_str(), 1);
@@ -395,4 +396,4 @@ int main(int argc, const char **argv)
         error() << "*** shellit: " << reason;
 
     return exit_code;
-}   
+}

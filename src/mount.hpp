@@ -68,9 +68,10 @@ public:
 
 protected:
     inline mountpoint() = default;
-    std::string path;
 
     static bool verbose;
+private:
+    std::string path;
 };
 
 class tmpdir final

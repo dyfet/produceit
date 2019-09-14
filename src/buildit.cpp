@@ -25,6 +25,7 @@
 #include "keyfile.hpp"
 #include "output.hpp"
 #include <cstdlib>
+#include <climits>
 #include <sys/utsname.h>
 #include <sys/wait.h>
 
@@ -40,14 +41,14 @@ args::flag update('u', "--update", "update before packaging");
 args::flag verbose('v', "--verbose", "display operations");
 keyfile etc_config;
 
-const char *apt_update[] = {
+const char *apt_update[] = { // NOLINT
     "apt-get update",
     "/usr/bin/apt-get",
     "update",
     nullptr,
 };
 
-const char *apt_upgrade[] = {
+const char *apt_upgrade[] = { // NOLINT
     "apt-get dist-upgrade",
     "/usr/bin/apt-get",
     "-y",
@@ -55,7 +56,7 @@ const char *apt_upgrade[] = {
     nullptr,
 };
 
-const char *apt_autoremove[] = {
+const char *apt_autoremove[] = { // NOLINT
     "apt-get autoremove",
     "/usr/bin/apt-get",
     "-y",
@@ -63,21 +64,21 @@ const char *apt_autoremove[] = {
     nullptr,
 };
 
-const char *apt_autoclean[] = {
+const char *apt_autoclean[] = { // NOLINT
     "apt-get autoclean",
     "/usr/bin/apt-get",
     "autoclean",
     nullptr,
 };
 
-const char *dnf_update[] = {
+const char *dnf_update[] = { // NOLINT
     "dnf update",
     "/usr/bin/dnf",
     "update",
     nullptr,
 };
 
-const char *dnf_clean[] = {
+const char *dnf_clean[] = { // NOLINT
     "dnf clean",
     "/usr/bin/dnf",
     "clean",
@@ -108,8 +109,8 @@ void debian(const std::string &pkg) {
     std::string buffer;
     std::vector<std::string> deps;
     while (std::getline(dsc, buffer)) {
-        if (buffer.substr(0, 14) == "Build-Depends:") {
-            auto list = split(buffer.substr(14), ",");
+        if (buffer.substr(0, 14) == "Build-Depends:") { // NOLINT
+            auto list = split(buffer.substr(14), ","); // NOLINT
             for (const auto &item : list) {
                 deps.push_back(strip(item));
             }
@@ -130,10 +131,10 @@ void debian(const std::string &pkg) {
         bflag = "-B";
 
     try {
-        const char *dpkg_source[] = {"dpkg-source", "-x", from.c_str(), "source", nullptr};
-        const char *dpkg_build[] = {"dpkg-buildpackage", bflag, "-us", nullptr};
-        const char *dpkg_depends[] = {"mk-build-deps", "-i", nullptr};
-        const char *dpkg_clean[] = {"apt-get", "-y", "purge", "--auto-remove", pkgclean.c_str(), nullptr};
+        const char *dpkg_source[] = {"dpkg-source", "-x", from.c_str(), "source", nullptr}; // NOLINT
+        const char *dpkg_build[] = {"dpkg-buildpackage", bflag, "-us", nullptr}; // NOLINT
+        const char *dpkg_depends[] = {"mk-build-deps", "-i", nullptr}; // NOLINT
+        const char *dpkg_clean[] = {"apt-get", "-y", "purge", "--auto-remove", pkgclean.c_str(), nullptr}; // NOLINT
 
         fork_command(dpkg_source, is(verbose));
         fsys::current_path("source");
@@ -165,7 +166,7 @@ void debian(const std::string &pkg) {
     ::exit(0);
 }
 
-void task(const char *argv[], const char *envp[]) {
+void task(const char *argv[], const char *envp[]) { // NOLINT
     fsys::mount tmp_mount("/tmp", fsys::file_perms::temporary);
     fsys::create_directory("/tmp/buildd");
 
@@ -235,7 +236,7 @@ int main(int argc, const char **argv)
 
         if(!etc_config.load(ETC_PREFIX "/produceit.conf"))
             etc_config.load("/etc/produceit.conf");
-        
+
         auto rootfs = etc_config["system"]["rootfs"];
         auto homefs = etc_config["system"]["homefs"] + "/root";
         auto source = etc_config["system"]["source"];
@@ -258,7 +259,7 @@ int main(int argc, const char **argv)
         else
             cpu(uts.machine);
 
-        gid_t nobody = 65535;
+        gid_t nobody = UID_MAX;
         auto grp = getgrnam("produceit");
         if(!grp)
             throw runtime_error("produceit group entry missing");
@@ -343,13 +344,13 @@ int main(int argc, const char **argv)
                 cp = pkg_paths[pkg_count];
             const char *ext = strrchr(cp, '.');
             auto len = strlen(cp);
-            if(len > 7 && !strcmp(cp + len - 7, ".src.rpm")) {
+            if(len > 7 && !strcmp(cp + len - 7, ".src.rpm")) { // NOLINT
                 if(!fsys::copy_file(pkg_paths[pkg_count], source + "/" + cp))
                     throw bad_pkg(cp);
             }
             else if(ext && !strcmp(ext, ".dsc")) {
                 if(!fsys::copy_dsc(pkg_paths[pkg_count], source))
-                    throw bad_pkg(cp);    
+                    throw bad_pkg(cp);
             }
             else
                 throw bad_pkg(cp);
@@ -432,7 +433,7 @@ int main(int argc, const char **argv)
         if(exec_pmode)
             personality(exec_pmode);
 #endif
-        
+
         auto envp = create_env(etc_config["env"]);
         try {
             output() << "update tasks " << update_tasks.size();
@@ -440,7 +441,7 @@ int main(int argc, const char **argv)
                 output() << "-- task " << args[0];
                 task(++args, envp);
             }
-            
+
             output() << "build tasks " << pkg_count;
             while(pkg_paths && *pkg_paths) {
                 output() << "-- build " << *pkg_paths;
@@ -458,7 +459,7 @@ int main(int argc, const char **argv)
             exit_code = status;
         }
         ::exit(exit_code);
-        
+
     }
     catch(const bad_pkg& e) {
         reason = e.what();

@@ -68,11 +68,11 @@ public:
     public:
         list& operator=(const list&) = delete;
         list(const list&) = delete;
-
-        inline list() noexcept = default;
+        list() noexcept = default;
 
         const std::string operator[](unsigned index);
-        size_t size();
+
+        static size_t size();
     };
 
     class flag final : public Option
@@ -84,12 +84,12 @@ public:
             return used_count;
         }
 
-        inline void set(unsigned value = 1) {
-            used_count = value;
+        inline void set(unsigned optvalue = 1) {
+            used_count = optvalue;
         }
 
-        inline flag& operator=(unsigned value) {
-            used_count = value;
+        inline flag& operator=(unsigned optvalue) {
+            used_count = optvalue;
             return *this;
         }
 
@@ -140,13 +140,13 @@ public:
     {
     public:
         charcode(char shortopt, const char *longopt = nullptr, const char *help = nullptr, const char *type = "text", char value = ' ') noexcept;
-        
-    inline void set(char value) {
-        code = value;
+
+    inline void set(char optvalue) {
+        code = optvalue;
     }
 
-    inline charcode& operator=(char value) {
-        code = value;
+    inline charcode& operator=(char optvalue) {
+        code = optvalue;
         return *this;
     }
 
@@ -156,7 +156,7 @@ public:
 
     private:
         char code;
-    
+
         void assign(const char *value) final;
     };
 
@@ -166,13 +166,13 @@ public:
         number(char shortopt, const char *longopt = nullptr, const char *help = nullptr, const char *type = "text", long value = 0) noexcept;
 
         number() noexcept;
-        
-        inline void set(long value) {
-            num = value;
+
+        inline void set(long optvalue) {
+            num = optvalue;
         }
 
-        inline number& operator=(long value) {
-            num = value;
+        inline number& operator=(long optvalue) {
+            num = optvalue;
             return *this;
         }
 
@@ -190,7 +190,7 @@ public:
     args& operator=(const args& from) = delete;
 
     args(const char **argv, Mode mode = Mode::NONE);
-    
+
     inline const std::string operator[](unsigned index) const {
         return argv[index];
     }

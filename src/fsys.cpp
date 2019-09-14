@@ -55,7 +55,7 @@ fsys::status_t fsys::status(const std::string& path, fsys_error& err)
 	info.access = info.modify = info.change = 0;
 
     if(!stat(path.c_str(), &ino)) {
-        info.perms = static_cast<file_perms>((ino.st_mode) & 07777);
+        info.perms = static_cast<file_perms>((ino.st_mode) & 07777); // NOLIMIT
         info.access = ino.st_atime;
         info.modify = ino.st_mtime;
         info.change = ino.st_ctime;
@@ -99,7 +99,7 @@ void fsys::current_path(const std::string& path, fsys_error& err)
 
 const std::string fsys::current_path(fsys_error& err)
 {
-    char path[256];
+    char path[256]; // NOLINT
     if (nullptr == getcwd(path, sizeof(path))) {
 		err = fsys::error();
 		return std::string();
@@ -164,7 +164,7 @@ std::string fsys::dirname(const std::string& path)
         return ".";
     if(lpos == fpos && lpos == path.size() - 1)
         return ".";
-        
+
     return path.substr(0, lpos);
 }
 
@@ -175,8 +175,8 @@ std::string fsys::basename(const std::string& path, const std::string& ext)
 
     if(pos)
         out = path.substr(++pos);
- 
-#if defined(__apple__)   
+
+#if defined(__apple__)
     if(ext.size() && ends_with(lower_case(out), lower_case(ext)))
         out = out.substr(0, out.size() - ext.size());
 #else
@@ -186,7 +186,7 @@ std::string fsys::basename(const std::string& path, const std::string& ext)
     return out;
 }
 
-bool fsys::create_directory(const std::string& path, perms_t mode, fsys_error& err) 
+bool fsys::create_directory(const std::string& path, perms_t mode, fsys_error& err)
 {
     if(::mkdir(path.c_str(), static_cast<mode_t>(mode))) {
 		err =  fsys::error();
@@ -234,7 +234,7 @@ bool fsys::remove_dsc(const std::string& source, fsys_error& err)
 	bool files = false;
 
 	while(getline(changes, buffer)) {
-        if(buffer.substr(0, 6) == "Files:") {
+        if(buffer.substr(0, 6) == "Files:") { // NOLINT
             files = true;
             continue;
         }
@@ -261,7 +261,7 @@ bool fsys::copy_dsc(const std::string& source, const std::string& target, fsys_e
 	bool files = false;
 
 	while(getline(changes, buffer)) {
-        if(buffer.substr(0, 6) == "Files:") {
+        if(buffer.substr(0, 6) == "Files:") { // NOLINT
             files = true;
             continue;
         }
@@ -283,7 +283,7 @@ bool fsys::copy_file(const std::string& from, const std::string& to, fsys_error&
 		err = fsys::error();
 		return false;
 	}
-	
+
 	std::ofstream target(to + ".tmp", ios::binary);
 	if(!target.is_open()) {
 		err = fsys::error();
@@ -313,7 +313,7 @@ fsys_error fsys::error()
 bad_pkg::bad_pkg(const std::string& path)
 {
 	msg_path = path;
-	msg_text = path + ": invalid source package";	
+	msg_text = path + ": invalid source package";
 }
 
 const char *bad_pkg::what() const noexcept
@@ -324,7 +324,7 @@ const char *bad_pkg::what() const noexcept
 bad_path::bad_path(const std::string& path)
 {
 	msg_path = path;
-	msg_text = path + ": not available";	
+	msg_text = path + ": not available";
 }
 
 const char *bad_path::what() const noexcept

@@ -268,7 +268,7 @@ namespace fsys {
     }
 
     bool is_hidden_file(const std::string& path);
-};
+}
 
 class bad_pkg final : public std::exception
 {
