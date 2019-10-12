@@ -2,11 +2,12 @@ Name:    produceit
 epoch:   1
 Summary: A chroot package production and testing environment
 Version: 0.3.1
-Release: 1
+Release: 2
 
 License: GPL-3.0+
 URL:     https://gitlab.com/tychosoft/produceit
 Source0: https://cloud.tychosoft.com/package/source/%{name}-%{version}.tar.gz
+Source1: %{name}-rpmlintrc
 Group:   Development/Tools/Building
 Vendor:  Tycho Softworks
 
@@ -61,9 +62,12 @@ debian based chroot.
 %doc README.md CHANGES
 %config(noreplace) %{_sysconfdir}/produceit.conf
 %config %{_sysconfdir}/permissions.d/produceit
-%verify(not user group mode) %attr(0711,root,root) %{_bindir}/buildit
-%verify(not user group mode) %attr(0711,root,root) %{_bindir}/shellit
-%verify(not user group mode) %attr(0711,root,root) %{_bindir}/lxcuser
+#%verify(not user group mode)
+%attr(4755,root,root) %{_bindir}/buildit
+#%verify(not user group mode)
+%attr(4755,root,root) %{_bindir}/shellit
+#%verify(not user group mode)
+%attr(4755,root,root) %{_bindir}/lxcuser
 %{_mandir}/man1/shellit.1*
 %{_mandir}/man1/buildit.1*
 %{_mandir}/man1/lxcuser.1*
