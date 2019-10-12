@@ -61,9 +61,9 @@ debian based chroot.
 %doc README.md CHANGES
 %config(noreplace) %{_sysconfdir}/produceit.conf
 %config %{_sysconfdir}/permissions.d/produceit
-%verify(not user group mode) %attr(711,root,root) %{_bindir}/buildit
-%verify(not user group mode) %attr(711,root,root) %{_bindir}/shellit
-%verify(not user group mode) %attr(711,root,root) %{_bindir}/lxcuser
+%verify(not user group mode) %attr(0711,root,root) %{_bindir}/buildit
+%verify(not user group mode) %attr(0711,root,root) %{_bindir}/shellit
+%verify(not user group mode) %attr(0711,root,root) %{_bindir}/lxcuser
 %{_mandir}/man1/shellit.1*
 %{_mandir}/man1/buildit.1*
 %{_mandir}/man1/lxcuser.1*

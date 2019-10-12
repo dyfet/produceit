@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby
+#!/usr/bin/ruby
 # Copyright (C) 2017 Tycho Softworks
 #
 # This file is free software; as a special exception the author gives
