@@ -1,0 +1,4 @@
+/usr/bin/shellit		root:root	4755
+/usr/bin/buildit		root:root	4755
+/usr/bin/lxcuser		root:root	4755
+

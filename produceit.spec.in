@@ -48,21 +48,22 @@ debian based chroot.
 %cmake_install
 
 %post
-%set_permissions /usr/bin/shellit /usr/bin/buildit /usr/bin/lxcuser
+%set_permissions %{_bindir}/shellit %{_bindir}/buildit %{_bindir}/lxcuser
 
 %verifyscript
-%verify_permissions -e /usr/bin/buildit
-%verify_permissions -e /usr/bin/shellit
-%verify_permissions -e /usr/bin/lxcuser
+%verify_permissions -e %{_bindir}/buildit
+%verify_permissions -e %{_bindir}/shellit
+%verify_permissions -e %{_bindir}/lxcuser
 
 %files
 %defattr(-,root,root)
 %license LICENSE
 %doc README.md CHANGES
 %config(noreplace) %{_sysconfdir}/produceit.conf
-%verify(not user group mode) %attr(4755,root,root) %{_bindir}/buildit
-%verify(not user group mode) %attr(4755,root,root) %{_bindir}/shellit
-%verify(not user group mode) %attr(4755,root,root) %{_bindir}/lxcuser
+%config %{_sysconfdir}/permissions.d/produceit
+%verify(not user group mode) %attr(711,root,root) %{_bindir}/buildit
+%verify(not user group mode) %attr(711,root,root) %{_bindir}/shellit
+%verify(not user group mode) %attr(711,root,root) %{_bindir}/lxcuser
 %{_mandir}/man1/shellit.1*
 %{_mandir}/man1/buildit.1*
 %{_mandir}/man1/lxcuser.1*
