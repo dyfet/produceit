@@ -1,2 +1,3 @@
 setBadness("permissions-unauthorized-file", 0);
 setBadness("no-changelogname-tag", 0);
+addFilter("no-changelogname-tag *");
