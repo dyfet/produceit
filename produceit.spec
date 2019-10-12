@@ -48,11 +48,12 @@ debian based chroot.
 %cmake_install
 
 %post
-%set_permissions /usr/bin/shellit /usr/bin/buildit
+%set_permissions /usr/bin/shellit /usr/bin/buildit /usr/bin/lxcuser
 
 %verifyscript
 %verify_permissions -e /usr/bin/buildit
 %verify_permissions -e /usr/bin/shellit
+%verify_permissions -e /usr/bin/lxcuser
 
 %files
 %defattr(-,root,root)
@@ -61,8 +62,10 @@ debian based chroot.
 %config(noreplace) %{_sysconfdir}/produceit.conf
 %verify(not user group mode) %attr(4755,root,root) %{_bindir}/buildit
 %verify(not user group mode) %attr(4755,root,root) %{_bindir}/shellit
+%verify(not user group mode) %attr(4755,root,root) %{_bindir}/lxcuser
 %{_mandir}/man1/shellit.1*
 %{_mandir}/man1/buildit.1*
+%{_mandir}/man1/lxcuser.1*
 
 %files debutils
 %defattr(-,root,root)
