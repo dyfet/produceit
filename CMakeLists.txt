@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.1.0)
-project(ProduceIt VERSION 0.3.0 LANGUAGES CXX)
+project(ProduceIt VERSION 0.3.1 LANGUAGES CXX)
 set(COPYRIGHT 2019)
 
 include(cmake/custom.cmake OPTIONAL)

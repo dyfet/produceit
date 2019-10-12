@@ -1,3 +1,6 @@
+v0.3.1
+* Sanitized flags and builds
+
 v0.3.0
 * Reorganized cmake
 * Published packaging

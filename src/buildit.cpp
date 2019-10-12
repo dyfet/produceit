@@ -29,6 +29,10 @@
 #include <sys/utsname.h>
 #include <sys/wait.h>
 
+#ifndef UID_MAX
+#define UID_MAX 1000
+#endif
+
 using namespace std;
 
 namespace { // anon namespace exclusive to buildit

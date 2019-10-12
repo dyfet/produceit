@@ -1,7 +1,7 @@
 Name:    produceit
 epoch:   1
 Summary: A chroot package production and testing environment
-Version: 0.3.0
+Version: 0.3.1
 Release: 1
 
 License: GPL-3.0+
