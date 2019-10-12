@@ -7,7 +7,7 @@ Release: 1
 License: GPL-3.0+
 URL:     https://gitlab.com/tychosoft/produceit
 Source0: https://cloud.tychosoft.com/package/source/%{name}-%{version}.tar.gz
-Group:   system/tools
+Group:   Development/Tools/Building
 Vendor:  Tycho Softworks
 
 BuildRequires: cmake >= 3.1.0
