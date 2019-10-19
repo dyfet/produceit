@@ -1,5 +1,5 @@
 /*
- * Copyright 2017-2018 Tycho Softworks.
+ * Copyright (C) 2017-2019 David Sugar <tychosoft@gmail.com>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -104,7 +104,7 @@ bool is_member(struct group *grp, const char *user)
     while((member = grp->gr_mem[pos++]) != nullptr) {
         if(eq(member, user))
             return true;
-    }   
+    }
     return false;
 }
 
@@ -165,9 +165,9 @@ int main(int argc, const char **argv)
             grp = getgrnam("sudo");
             if(!grp)
                 grp = getgrnam("wheel");
-            
+
             if(!is_member(grp, pwd->pw_name))
-                throw runtime_error(std::string(pwd->pw_name) + ": has to be in sudo or wheel to change user id");    
+                throw runtime_error(std::string(pwd->pw_name) + ": has to be in sudo or wheel to change user id");
         }
 
         char path[64];
@@ -207,4 +207,4 @@ int main(int argc, const char **argv)
         error() << "*** lxcuser: " << reason;
 
     return exit_code;
-}   
+}

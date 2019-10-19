@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Tycho Softworks.
+ * Copyright (C) 2017-2019 David Sugar <tychosoft@gmail.com>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ bool fork_handler(bool output)
 	}
 	::signal(SIGINT, SIG_DFL);
 	::signal(SIGTERM, SIG_DFL);
-	
+
 	if(!output) {
 		auto fd = ::open("/dev/null", O_WRONLY); // NOLINT
 		::dup2(fd, 1);

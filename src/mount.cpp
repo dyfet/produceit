@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Tycho Softworks.
+ * Copyright (C) 2017-2019 David Sugar <tychosoft@gmail.com>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,7 +48,7 @@ fsys::mountpoint::mountpoint(const std::string& where)
 fsys::mountpoint::~mountpoint()
 {
     release();
-}       
+}
 
 
 void fsys::mountpoint::release()
@@ -149,7 +149,7 @@ void fsys::mount::bind(const std::string& from, const std::string& where, perms_
 bad_mount::bad_mount(const std::string& path)
 {
     msg_path = path;
-    msg_text = path + ": failed to mount";  
+    msg_text = path + ": failed to mount";
 }
 
 const char *bad_mount::what() const noexcept

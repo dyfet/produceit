@@ -1,12 +1,22 @@
+# Copyright (C) 2018-2019 David Sugar <tychosoft@gmail.com>.
+#
+# This file is free software; as a special exception the author gives
+# unlimited permission to copy and/or distribute it, with or without
+# modifications, as long as this notice is preserved.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY, to the extent permitted by law; without even the
+# implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
 Name:    produceit
 epoch:   1
 Summary: A chroot package production and testing environment
-Version: 0.3.1
+Version: 0.3.2
 Release: 2
 
 License: GPL-3.0+
-URL:     https://gitlab.com/tychosoft/produceit
-Source0: https://cloud.tychosoft.com/package/source/%{name}-%{version}.tar.gz
+URL:     https://gitlab.com/dyfet/produceit
+Source0: https://public.tychosoft.com/tarballs/%{name}-%{version}.tar.gz
 Source1: %{name}-rpmlintrc
 Group:   Development/Tools/Building
 Vendor:  Tycho Softworks

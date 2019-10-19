@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Tycho Softworks.
+ * Copyright (C) 2017-2019 David Sugar <tychosoft@gmail.com>.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -70,13 +70,13 @@ std::string dir::get()
         next();
     }
     return result;
-} 
+}
 
 void dir::next()
 {
     if(!state)
         return;
-    
+
     state->find = ::readdir(state->handle);
     if(!state->find)
         close();
@@ -89,7 +89,7 @@ void dir::close()
     if(!state)
         return;
 
-    ::closedir(state->handle); 
+    ::closedir(state->handle);
 
     delete state;
     state = nullptr;

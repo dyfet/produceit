@@ -1,5 +1,5 @@
 #!/usr/bin/ruby
-# Copyright (C) 2017 Tycho Softworks
+# Copyright (C) 2017-2019 David Sugar <tychosoft@gmail.com>
 #
 # This file is free software; as a special exception the author gives
 # unlimited permission to copy and/or distribute it, with or without
