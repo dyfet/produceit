@@ -58,6 +58,7 @@ test_*
 *.dsc
 *.changes
 *.pdf
+*.qch
 *.cbp
 *.o
 *.a

@@ -46,8 +46,8 @@ GENERATE_HTML = YES
 GENERATE_XML = YES
 GENERATE_HTMLHELP = YES
 GENERATE_QHP = YES
-QHP_NAMESPACE = com.tychosoft.bayonne
-QCH_FILE = ../../bayonne.qch
+QHP_NAMESPACE = com.tychosoft.produceit
+QCH_FILE = ../../produceit.qch
 QHG_LOCATION = qhelpgenerator
 
 GENERATE_TREEVIEW = YES
