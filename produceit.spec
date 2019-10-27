@@ -15,7 +15,7 @@ Version: 0.3.2
 Release: 2
 
 License: GPL-3.0+
-URL:     https://gitlab.com/dyfet/produceit
+URL:     https://public.tychosoft.com
 Source0: https://public.tychosoft.com/tarballs/%{name}-%{version}.tar.gz
 Source1: %{name}-rpmlintrc
 Group:   Development/Tools/Building
