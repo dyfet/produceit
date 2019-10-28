@@ -16,10 +16,10 @@ Release: 2
 
 License: GPL-3.0+
 URL:     https://www.tychosoft.com
-Source0: https://public.tychosoft.com/tarballs/%{name}-%{version}.tar.gz
+Source0: https://public.tychosoft.com/archive/%{name}-%{version}.tar.gz
 Source1: %{name}-rpmlintrc
 Group:   Development/Tools/Building
-Vendor:  Tycho Softworks
+Vendor:  tychosoft.com
 
 BuildRequires: cmake >= 3.1.0
 BuildRequires: gcc-c++
