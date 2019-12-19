@@ -30,7 +30,7 @@ Suggests:	   qemu-user-static
 PreReq:        permissions
 
 %package debutils
-Requires: ruby, gnupg2
+Requires: ruby, gpg2
 Summary: Utilities used with produceit or inside a debian chroot
 
 %description
