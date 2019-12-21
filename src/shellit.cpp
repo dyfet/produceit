@@ -265,8 +265,11 @@ int main(int argc, const char **argv)
         for(const auto& path : files) {
             if(is(verbose))
                 output() << "copy " << path;
-            if(!fsys::copy_file(path, distrofs + "/" + path)) // NOLINT
+            if(!fsys::copy_file(path, distrofs + "/" + path)) { // NOLINT
+                if(path == "/etc/gshadow") // safe to ignore...
+                    continue;
                 throw bad_path(path);
+            }
         }
 
         // begin mounting

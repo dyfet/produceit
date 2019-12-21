@@ -1,3 +1,6 @@
+v0.3.3
+* Safe to ignore missing /etc/gshadow
+
 v0.3.2
 * Update url info
 * Update copyrights
