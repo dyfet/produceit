@@ -13,20 +13,18 @@ epoch:   1
 Summary: A chroot package production and testing environment
 Version: ${PROJECT_VERSION}
 Release: 2
-
 License: GPL-3.0+
 URL:     https://www.tychosoft.com
 Source0: https://public.tychosoft.com/archive/%{name}-%{version}.tar.gz
 Source1: %{name}-rpmlintrc
 Group:   Development/Tools/Building
-Vendor:  tychosoft.com
 
 BuildRequires: cmake >= 3.1.0
 BuildRequires: gcc-c++
 Requires(post): permissions
 Requires:      rpm-build
 Recommends:	   produceit-debutils
-Suggests:	   qemu-user-static
+Suggests:	   qemu-linux-user
 PreReq:        permissions
 
 %package debutils
