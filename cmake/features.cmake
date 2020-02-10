@@ -25,7 +25,6 @@ check_function_exists(setgroups HAVE_SETGROUPS)
 set(cmake_position_independent_code true)
 set(PRODUCEIT_LIBDIR "${CMAKE_INSTALL_FULL_LIBDIR}/produceit")
 
-set(CMAKE_CXX_STANDARD 14)
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
     set(DEBUG_BUILD true)
     add_definitions(-DDEBUG)

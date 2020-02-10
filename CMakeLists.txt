@@ -11,6 +11,7 @@
 cmake_minimum_required(VERSION 3.1.0)
 project(ProduceIt VERSION 0.3.3 LANGUAGES CXX)
 set(COPYRIGHT 2019)
+set(CMAKE_CXX_STANDARD 14)
 
 include(cmake/custom.cmake OPTIONAL)
 include(cmake/project.cmake)
