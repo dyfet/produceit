@@ -1,6 +1,7 @@
 v0.4.0
 * Remove vendor from spec
 * Current flag added for inside vs outside home dir
+* Updated to C++14 standard
 
 v0.3.3
 * Safe to ignore missing /etc/gshadow
