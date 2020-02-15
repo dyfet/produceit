@@ -37,6 +37,7 @@ namespace { // anon namespace for application
 args::flag helpflag('h', "--help", "display this list");
 args::flag althelp('?', nullptr, nullptr);
 args::string arch('a', "--arch", "cpu architecture");
+args::flag current('c', "--current", "use current directory");
 args::flag shell('s', "--shell", "apply current shell");
 args::flag verbose('v', "--verbose", "display operations");
 args::flag xserver('X', nullptr, "X server support");
@@ -325,7 +326,7 @@ int main(int argc, const char **argv)
         auto userpath = *session + pwd->pw_dir;
         fsys::mount home_mount;
         if(exec_uid >= 1000) {
-            if(exec_paths[0])
+            if(is(current))
                 home_mount.bind(pwd->pw_dir, userpath);
             else
                 home_mount.bind(homeuser, userpath);
@@ -352,8 +353,8 @@ int main(int argc, const char **argv)
             auto env = etc_config["env"];
 
             env["CWD"] = pwd->pw_dir;
-            ::setenv("PATH", env["PATH"].c_str(), 1);
             fsys::current_path(pwd->pw_dir);
+            ::setenv("PATH", env["PATH"].c_str(), 1);
             endpwent();
             endgrent();
 
@@ -366,8 +367,14 @@ int main(int argc, const char **argv)
             ::execve(shell_cmd[0], (char *const*)shell_cmd, (char *const *)create_env(env));
         }
         else {
-            ::setenv("CWD", cwd.c_str(), 1);
-            fsys::current_path(cwd);
+            if(is(current)) {
+                ::setenv("CWD", cwd.c_str(), 1);
+                fsys::current_path(cwd);
+            }
+            else {
+                ::setenv("CWD", pwd->pw_dir, 1);
+                fsys::current_path(pwd->pw_dir);
+            }
             endpwent();
             endgrent();
             umask(exec_mask);
