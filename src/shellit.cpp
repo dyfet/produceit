@@ -324,12 +324,28 @@ int main(int argc, const char **argv)
 
         // home is based on mode...
         auto userpath = *session + pwd->pw_dir;
+        auto bindings = etc_config["bind"];
+
         fsys::mount home_mount;
+        fsys::mount bind_mount[bindings.size() + 1];
         if(exec_uid >= 1000) {
             if(is(current))
                 home_mount.bind(pwd->pw_dir, userpath);
-            else
+            else {
                 home_mount.bind(homeuser, userpath);
+                auto entry = 0;
+                for(const auto& pair : bindings) {
+                    auto origin = std::string(pwd->pw_dir);
+                    auto from = origin + "/" + pair.second;
+                    auto to = userpath + "/" + pair.first;
+                    if(!fsys::is_directory(from) || !fsys::is_directory(to))
+                        continue;
+                    auto touch = to + "/.keep";
+                    auto fd = ::creat(touch.c_str(), 0600);
+                    ::close(fd);
+                    bind_mount[entry++].bind(from, to);
+                }
+            }
         }
 
         fsys::mountpoint proc_release(*session + "/proc");
