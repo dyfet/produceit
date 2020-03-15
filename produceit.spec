@@ -49,7 +49,8 @@ debian based chroot.
 %build
 %cmake \
         -DCMAKE_INSTALL_SYSCONFDIR=%{_sysconfdir} \
-        -DCMAKE_INSTALL_LOCALSTATEDIR=%{_localstatedir}
+        -DCMAKE_INSTALL_LOCALSTATEDIR=%{_localstatedir} \
+		-DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=TRUE
 
 %{__make} %{?_smp_mflags}
 
