@@ -15,6 +15,7 @@ doxy/
 cmake-build-*/
 build/
 deploy/
+debian/changelog
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json

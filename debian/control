@@ -1,0 +1,31 @@
+Source: produceit
+Priority: optional
+Maintainer: David Sugar <tychosoft@gmail.com>
+Build-Depends: debhelper (>= 10),
+               dpkg-dev (>= 1.16.0),
+               cmake (>= 3.1.0)
+Standards-Version: 3.9.2
+Homepage: https://www.tychosoft.com
+Section: devel
+
+Package: produceit
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, gnupg, produceit-debutils, devscripts
+Recommends: rpm, createrepo, binfmt-support
+Suggests: xserver-xephyr
+Description: chroot package production and testing environment
+ This package includes tools are used for managing chroot and package build
+ environments.  Both shellit and buildit offers a fast way to execute commands
+ and build packages in managed chroot's from multiple distributions.  There are
+ some additional cross-distro packaging utilities to help constructing full
+ archive build environments.
+
+Package: produceit-debutils
+Section: devel
+Architecture: all
+Depends: ${misc:Depends}, ruby
+Description: utilities used with produceit or inside debian chroots
+ This provides some stand-alone utilities used to produce debian archives.
+ These can be used either with produceit, or installed into a produceit managed
+ debian based chroot.
+

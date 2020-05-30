@@ -41,7 +41,7 @@ add_custom_target(dist
 if(RELEASE AND NOT PROJECT_RELEASE)
     set(PROJECT_RELEASE "${RELEASE}")
 elseif(NOT PROJECT_RELEASE)
-    set(PROJECT_RELEASE "0")
+    set(PROJECT_RELEASE "1")
 endif()
 set(RC_VERSION "${RC_VERSION},${PROJECT_RELEASE}")
 
@@ -56,3 +56,12 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     endif()
 endif()
 
+if(UNIX AND EXISTS "debian/" AND EXISTS ".git/")
+    execute_process(COMMAND date -R OUTPUT_VARIABLE DEBIAN_DATE OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND git config user.name OUTPUT_VARIABLE DEBIAN_NAME OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(COMMAND git config user.email OUTPUT_VARIABLE DEBIAN_EMAIL OUTPUT_STRIP_TRAILING_WHITESPACE)
+    execute_process(
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        COMMAND echo "${PROJECT_ARCHIVE} (${PROJECT_VERSION}-${PROJECT_RELEASE}) UNRELEASED; urgency=low\n\n  * Internal Release\n\n -- ${DEBIAN_NAME} <${DEBIAN_EMAIL}>  ${DEBIAN_DATE}" OUTPUT_FILE "debian/changelog"
+    )
+endif()

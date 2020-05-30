@@ -11,7 +11,7 @@
 Name:    produceit
 epoch:   1
 Summary: A chroot package production and testing environment
-Version: 0.4.1
+Version: 0.4.2
 Release: 2
 License: GPL-3.0+
 URL:     https://www.tychosoft.com
@@ -50,7 +50,7 @@ debian based chroot.
 %cmake \
         -DCMAKE_INSTALL_SYSCONFDIR=%{_sysconfdir} \
         -DCMAKE_INSTALL_LOCALSTATEDIR=%{_localstatedir} \
-		-DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=TRUE
+        -DCMAKE_BUILD_WITH_INSTALL_RPATH:BOOL=TRUE
 
 %{__make} %{?_smp_mflags}
 

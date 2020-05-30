@@ -9,7 +9,7 @@
 # implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 cmake_minimum_required(VERSION 3.1.0)
-project(ProduceIt VERSION 0.4.1 LANGUAGES CXX)
+project(ProduceIt VERSION 0.4.2 LANGUAGES CXX)
 set(COPYRIGHT 2019)
 set(CMAKE_CXX_STANDARD 14)
 
